@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 100,
+              height: 155,
               decoration: const BoxDecoration(
                 gradient: RadialGradient(
                   colors: [Color(0xFF061F89), Color(0xFF2233AB)],
