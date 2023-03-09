@@ -150,7 +150,72 @@ class _PlacaPageState extends State<PlacaPage> {
               width: 1340,
               decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(12.0))),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    placa,
+                    style: const TextStyle(
+                      color: Color(0xFF1A2EA1),
+                      fontSize: 72,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Text(
+                    "Sua placa está correta?",
+                    style: TextStyle(
+                      color: Color(0xFF1E1E1E),
+                      fontSize: 60,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: 620,
+                        height: 152,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: SizedBox(
+                            width: 620,
+                            height: 152,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF875E),
+                                    Color(0xFFFA6900),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Não, alterar placa",
+                                  style: TextStyle(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
 
             // Real Time Clock
