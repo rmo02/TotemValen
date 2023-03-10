@@ -13,6 +13,7 @@ class _PlacaPageState extends State<PlacaPage> {
   String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
   String permanecia = "179h 25m";
   String placa = "AAA-1111";
+  final shape = StadiumBorder();
 
   @override
   Widget build(BuildContext context) {
@@ -176,30 +177,37 @@ class _PlacaPageState extends State<PlacaPage> {
                       SizedBox(
                         width: 620,
                         height: 152,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFFFF875E),
+                                Color(0xFFFA6900),
+                              ],
                             ),
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: SizedBox(
-                            width: 620,
-                            height: 152,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFFFF875E),
-                                    Color(0xFFFA6900),
-                                  ],
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              disabledForegroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.block,
+                                  size: 50,
                                 ),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: const Center(
-                                child: Text(
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                Text(
                                   "Não, alterar placa",
                                   style: TextStyle(
                                     fontSize: 48,
@@ -207,7 +215,53 @@ class _PlacaPageState extends State<PlacaPage> {
                                     color: Colors.white,
                                   ),
                                 ),
-                              ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 620,
+                        height: 152,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF061F89),
+                                Color(0xFF2233AB),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              disabledForegroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  size: 50,
+                                ),
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                Text(
+                                  "Sim",
+                                  style: TextStyle(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
