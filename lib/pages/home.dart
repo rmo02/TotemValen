@@ -1,7 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/pages/placa.dart';
+import 'package:totenvalen/pages/placa_insert.dart';
 import 'package:totenvalen/pages/scan.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,10 +13,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? scanResult;
   String tdata = DateFormat("HH:mm").format(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -56,12 +62,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     primary: Colors.white
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ScanPage()),
-                    );
-                  },
+                  onPressed: scanBarCode,
                   child: SizedBox(
                     height: 335,
                     width: 890,
@@ -107,5 +108,31 @@ class _HomePageState extends State<HomePage> {
       ),
 
     );
+
+  }
+
+  //método scan
+  Future scanBarCode() async {
+    String scanResult;
+    try {
+      scanResult = await FlutterBarcodeScanner.scanBarcode(
+          "#ff6666",
+          "Cancelar",
+          false,
+          ScanMode.BARCODE
+      );
+    } on PlatformException {
+      scanResult = 'Não foi possível a leitura';
+    }
+    if (!mounted) return;
+    setState(() => this.scanResult = scanResult);
+
+    if (scanResult != '-1') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PlacaPage(scanResult: scanResult)),
+      );
+    }
+
   }
 }

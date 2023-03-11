@@ -17,6 +17,7 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   String? scanResult;
   String tdata = DateFormat("HH:mm").format(DateTime.now());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

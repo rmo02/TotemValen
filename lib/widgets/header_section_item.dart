@@ -70,7 +70,7 @@ class HeaderSectionItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    actualDateTime,
+                    actualDate,
                     style: TextStyle(
                       color: Color(0xFF292929),
                       fontSize: (36 / proportion).roundToDouble(),
