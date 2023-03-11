@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -32,15 +33,14 @@ class _PlacaPageState extends State<PlacaPage> {
   _carregarDados() async {
     var response = await http.get(
         Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
-        headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiMzA4NzZlYzEzOWI1MmVhMTVkYjBkMTgwZjBmMTIzNjg3OTQ3ZGVjZjdhOTg3NmEzYThhZjliOGFkZmI2ZGNkOTQ2YzcxYzhlZDQxYjQ1N2QiLCJpYXQiOjE2Nzg1NDIxNTQuMTAzOTM2LCJuYmYiOjE2Nzg1NDIxNTQuMTAzOTM5LCJleHAiOjE2Nzg1NDc1NTQuMDg3MjUsInN1YiI6IjMiLCJzY29wZXMiOlsidG90ZW5fcGR2IiwidG90ZW5fcGR2X3BhdGlvXzEiXX0.Cx0KEQ9YA_jgV0N_rYD5cQ19uYVYk4dKA0qUUs3a4FnHAjSb0rLiuC8f-wmRgQanffa7-APvdakRDDhwPodsDZfOSKCL6TnPEFanD5oSjUZk7NJNomIrlbaoho03C8mrDYaSZSwve7fkaejBw-uneX9jJYz5atZtYh1tc45zoeAAGLOBEuQOg4EhDRleRKJAUsm5HtSEXXddYF-i1h9za_qim157dmV0USE_y-lCELuR6AUS6OyKROdE5ExF-hI5CaGNoQj4V4x01QjUm0kuo__97MT48632jTToi5-PRmU3X21zBm2YNQLuAgOvvEG8nZ5CJl6Rkfb8IlB2_P6tFhTTR2iEtdHU2OmEVVg0Gl2ft-wDfz7lg5QqAzwrIuVY_ZbXnCq7mKSm81JSWPGAr9tlk04SXRdK8rWcAi5I3plBwXg-C6ghQ7PN6zwmXlGWpCRjb7OjmfcD6RqplUjPyiLxJHlImNk3pUSxryUnIdSQoHOfRjDea3Wyi1UKx548Zjx97lzbWspv2C06P0XslxAKvnv40h4o56MkrKtvV1PmWdtVDRKgRpqb1ncOvPABAwFhC_x5tjz0ckOTYS6y3_09KW0BKE49te1kjn5ImcptZ9mWjfolFEJ_SBvWf2ATm96OAq9_InQ6SlVL8N_nfrXWjPENgFSHVwUZV5bie9s'},
+        headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiZTFiZDc2ODE4N2UxOTQyZTc2ZmJhMmQyNDFmNmZmN2NmOTA2YWJkOTk2OGZhOTZlYTI5NjczODc4NjRjY2M1YWRkZjlmNzQ1NzFmZTMxOTMiLCJpYXQiOjE2Nzg1NzMzODYuMDgyNywibmJmIjoxNjc4NTczMzg2LjA4MjcwMywiZXhwIjoxNjc4NTc4Nzg2LjA3ODYzMSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.Z98_s2fndqesP0lCx7KjgJ-5hG_3iaHDe9VvU2xiNBeRI8WNaVe8OGlOIduBQrxQyoFE7-KHrnfTNYvqCeHKQW1o3nGHTIrKXy0Psa-uOLiDtnZ7LtYRV6S0QMkdwcQO_imdGQH9hL8NBphtuLRczoXP75p6R1hmgQDlE6YqwFsniYa5X0CtcNu1MWrO4K-XFfHI-C2YMOCtz1qQl1j7wwVtccEXcM0_rJJzBmbz_tk0emONpwuPR4ezzm8np0n5VYzew5wfBNR5RH5R1CVB_BH1Wx9LvFknDR9lXS_eW3nGL02noEi0FujaqVSd21rMq7zgYRSHft8L5V3DN4Tp6NLBie20m3uOrQRmLrPkaZN8v24vs-56g4eDTrmxjhdcDnEdBXBba9BvLgqSsFrrjmsey-lNRXkfJehJ-9fFzJxjJKCDkkvOt104b2d83m2Wp7jcA6xOUUZLYWO_0QhUT4ZHbE23YqiiVxxtuyxXQrnFrDabsgUWyKqbpAzUIcUlr-0zFcQync3Hw9ObKkiUgd7lnQLFpE7nHSS_f_68lagmNk-pvNTqS3cHSB4vmbxyWF0bMIPTHmehx2sY5B1MVykvj2bfdZILSUUe-u56WwWVlVT6F_8zgpssIf6HhFGV9LiCVE1xM3NSqb0a8TSFZe6Z2eUha3L6AdYvzdFheqI'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      print(map['dados']);
       setState(() {
         dados = map['dados'];
         placa = map['dados']['ticket']['placa'];
-        // permanecia = map['dados']['permanencia'];
+        permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
       });
@@ -90,7 +90,7 @@ class _PlacaPageState extends State<PlacaPage> {
                     Text(
                       placa,
                       style: TextStyle(
-                        color: Color(0xFF1A2EA1),
+                        color: const Color(0xFF1A2EA1),
                         fontSize: (72 / proportion).roundToDouble(),
                         fontWeight: FontWeight.w600,
                       ),
@@ -98,7 +98,7 @@ class _PlacaPageState extends State<PlacaPage> {
                     Text(
                       "Sua placa está correta?",
                       style: TextStyle(
-                        color: Color(0xFF1E1E1E),
+                        color: const Color(0xFF1E1E1E),
                         fontSize: (60 / proportion).roundToDouble(),
                         fontWeight: FontWeight.w500,
                       ),
