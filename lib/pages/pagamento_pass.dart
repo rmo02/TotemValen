@@ -12,8 +12,9 @@ class PagamentoPassPage extends StatefulWidget {
 
 class _PagamentoPassPageState extends State<PagamentoPassPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
-  String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
-  String permanecia = "179h 25m";
+  String enterDate = "";
+  String enterHour = "";
+  String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
 
@@ -33,7 +34,8 @@ class _PagamentoPassPageState extends State<PagamentoPassPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                actualDate: actualDate,
+                enterHour: enterHour,
+                enterDate: enterDate,
                 permanecia: permanecia,
                 placa: placa,
               ),

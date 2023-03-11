@@ -12,7 +12,8 @@ class CpfPage extends StatefulWidget {
 
 class _CpfPageState extends State<CpfPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
-  String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
+  String enterDate = "";
+  String enterHour = "";
   String permanecia = "179h 25m";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
@@ -24,13 +25,20 @@ class _CpfPageState extends State<CpfPage> {
         child: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              HeaderSectionItem(proportion: proportion, actualDateTime: actualDateTime, actualDate: actualDate, permanecia: permanecia, placa: placa),
+              HeaderSectionItem(
+                proportion: proportion,
+                actualDateTime: actualDateTime,
+                enterHour: enterHour,
+                enterDate: enterDate,
+                permanecia: permanecia,
+                placa: placa,
+              ),
               Container(
                 height: (500 / proportion).roundToDouble(),
                 width: (1340 / proportion).roundToDouble(),
@@ -93,7 +101,7 @@ class _CpfPageState extends State<CpfPage> {
                                     "Não",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
@@ -139,7 +147,7 @@ class _CpfPageState extends State<CpfPage> {
                                     "Sim",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),

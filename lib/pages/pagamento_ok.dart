@@ -13,7 +13,8 @@ class PagamentoOKPage extends StatefulWidget {
 
 class _PagamentoOKPageState extends State<PagamentoOKPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
-  String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
+  String enterDate = "";
+  String enterHour = "";
   String permanecia = "179h 25m";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
@@ -28,7 +29,9 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
 
     var sub = countDownTimer.listen(null);
     sub.onData((duration) {
-      setState(() { _current = _start - duration.elapsed.inSeconds; });
+      setState(() {
+        _current = _start - duration.elapsed.inSeconds;
+      });
     });
 
     sub.onDone(() {
@@ -50,16 +53,17 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
         child: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                actualDate: actualDate,
+                enterHour: enterHour,
+                enterDate: enterDate,
                 permanecia: permanecia,
                 placa: placa,
               ),
@@ -132,7 +136,7 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
                                     "Finalizar ($_current)",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
@@ -158,6 +162,4 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
       ),
     );
   }
-
-
 }

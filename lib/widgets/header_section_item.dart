@@ -5,14 +5,16 @@ class HeaderSectionItem extends StatelessWidget {
     Key? key,
     required this.proportion,
     required this.actualDateTime,
-    required this.actualDate,
+    required this.enterHour,
+    required this.enterDate,
     required this.permanecia,
     required this.placa,
   }) : super(key: key);
 
   final double proportion;
   final String actualDateTime;
-  final String actualDate;
+  final String enterHour;
+  final String enterDate;
   final String permanecia;
   final String placa;
 
@@ -49,7 +51,7 @@ class HeaderSectionItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    actualDate,
+                    enterDate,
                     style: TextStyle(
                       color: Color(0xFF292929),
                       fontSize: (36 / proportion).roundToDouble(),
@@ -70,7 +72,7 @@ class HeaderSectionItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    actualDate,
+                    enterHour,
                     style: TextStyle(
                       color: Color(0xFF292929),
                       fontSize: (36 / proportion).roundToDouble(),

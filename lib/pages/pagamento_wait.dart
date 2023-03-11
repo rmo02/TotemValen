@@ -13,8 +13,9 @@ class PagamentoWaitPage extends StatefulWidget {
 
 class _PagamentoWaitPageState extends State<PagamentoWaitPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
-  String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
-  String permanecia = "179h 25m";
+  String enterDate = "";
+  String enterHour = "";
+  String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
 
@@ -25,16 +26,17 @@ class _PagamentoWaitPageState extends State<PagamentoWaitPage> {
         child: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                actualDate: actualDate,
+                enterHour: enterHour,
+                enterDate: enterDate,
                 permanecia: permanecia,
                 placa: placa,
               ),
@@ -108,7 +110,7 @@ class _PagamentoWaitPageState extends State<PagamentoWaitPage> {
                                     "Cancelar",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
