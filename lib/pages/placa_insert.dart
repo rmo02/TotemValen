@@ -67,7 +67,8 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                actualDate: enterHour,
+                enterHour: enterHour,
+                enterDate: enterDate,
                 permanecia: permanecia,
                 placa: placa,
               ),
