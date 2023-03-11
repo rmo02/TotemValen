@@ -79,7 +79,7 @@ class _ScanPageState extends State<ScanPage> {
                   SizedBox(
                     height: 100,
                     width: 850,
-                    child: ElevatedButton(
+                    child: ElevatedButton (
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
