@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:totenvalen/widgets/header_section_item.dart';
+
+import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 
-class CpfPage extends StatefulWidget {
-  const CpfPage({Key? key}) : super(key: key);
+class PagamentoWaitPage extends StatefulWidget {
+  const PagamentoWaitPage({Key? key}) : super(key: key);
 
   @override
-  State<CpfPage> createState() => _CpfPageState();
+  State<PagamentoWaitPage> createState() => _PagamentoWaitPageState();
 }
 
-class _CpfPageState extends State<CpfPage> {
+class _PagamentoWaitPageState extends State<PagamentoWaitPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
   String permanecia = "179h 25m";
@@ -30,9 +31,17 @@ class _CpfPageState extends State<CpfPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              HeaderSectionItem(proportion: proportion, actualDateTime: actualDateTime, actualDate: actualDate, permanecia: permanecia, placa: placa),
+              HeaderSectionItem(
+                proportion: proportion,
+                actualDateTime: actualDateTime,
+                actualDate: actualDate,
+                permanecia: permanecia,
+                placa: placa,
+              ),
+
+              // Main info
               Container(
-                height: (500 / proportion).roundToDouble(),
+                height: (640 / proportion).roundToDouble(),
                 width: (1340 / proportion).roundToDouble(),
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -42,21 +51,27 @@ class _CpfPageState extends State<CpfPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      "Deseja o CPF/CNPJ na nota?",
+                      "Aguardando pagamento",
                       style: TextStyle(
                         color: Color(0xFF1A2EA1),
                         fontSize: (72 / proportion).roundToDouble(),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(
-                      height: (130 / proportion).roundToDouble(),
+                    Text(
+                      "Insira ou aproxime o cartão na maquininha",
+                      style: TextStyle(
+                        color: Color(0xFF000000),
+                        fontSize: (48 / proportion).roundToDouble(),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
+                    CircularProgressIndicator(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: (620 / proportion).roundToDouble(),
+                          width: (1280 / proportion).roundToDouble(),
                           height: (152 / proportion).roundToDouble(),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
@@ -90,53 +105,7 @@ class _CpfPageState extends State<CpfPage> {
                                     height: (24 / proportion).roundToDouble(),
                                   ),
                                   Text(
-                                    "Não",
-                                    style: TextStyle(
-                                      fontSize:
-                                      (48 / proportion).roundToDouble(),
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: (620 / proportion).roundToDouble(),
-                          height: (152 / proportion).roundToDouble(),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF061F89),
-                                  Color(0xFF2233AB),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                  (15 / proportion).roundToDouble()),
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                disabledForegroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    size: (50 / proportion).roundToDouble(),
-                                  ),
-                                  SizedBox(
-                                    width: (24 / proportion).roundToDouble(),
-                                    height: (24 / proportion).roundToDouble(),
-                                  ),
-                                  Text(
-                                    "Sim",
+                                    "Cancelar",
                                     style: TextStyle(
                                       fontSize:
                                       (48 / proportion).roundToDouble(),
@@ -154,6 +123,7 @@ class _CpfPageState extends State<CpfPage> {
                   ],
                 ),
               ),
+
               RealTimeClockItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
