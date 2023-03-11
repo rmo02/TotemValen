@@ -13,8 +13,9 @@ class PagamentoSelectPage extends StatefulWidget {
 
 class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
-  String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
-  String permanecia = "179h 25m";
+  String enterDate = "";
+  String enterHour = "";
+  String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
 
@@ -25,13 +26,20 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
         child: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              HeaderSectionItem(proportion: proportion, actualDateTime: actualDateTime, actualDate: actualDate, permanecia: permanecia, placa: placa),
+              HeaderSectionItem(
+                proportion: proportion,
+                actualDateTime: actualDateTime,
+                enterHour: enterHour,
+                enterDate: enterDate,
+                permanecia: permanecia,
+                placa: placa,
+              ),
               Container(
                 height: (660 / proportion).roundToDouble(),
                 width: (1340 / proportion).roundToDouble(),
@@ -87,14 +95,16 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                         size: (50 / proportion).roundToDouble(),
                                       ),
                                       SizedBox(
-                                        width: (24 / proportion).roundToDouble(),
-                                        height: (24 / proportion).roundToDouble(),
+                                        width:
+                                            (24 / proportion).roundToDouble(),
+                                        height:
+                                            (24 / proportion).roundToDouble(),
                                       ),
                                       Text(
                                         "Cartão de Débito",
                                         style: TextStyle(
                                           fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                              (48 / proportion).roundToDouble(),
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
                                         ),
@@ -133,14 +143,16 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                         size: (50 / proportion).roundToDouble(),
                                       ),
                                       SizedBox(
-                                        width: (24 / proportion).roundToDouble(),
-                                        height: (24 / proportion).roundToDouble(),
+                                        width:
+                                            (24 / proportion).roundToDouble(),
+                                        height:
+                                            (24 / proportion).roundToDouble(),
                                       ),
                                       Text(
                                         "Cartão de Crédito",
                                         style: TextStyle(
                                           fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                              (48 / proportion).roundToDouble(),
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
                                         ),
@@ -187,14 +199,16 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                         size: (50 / proportion).roundToDouble(),
                                       ),
                                       SizedBox(
-                                        width: (24 / proportion).roundToDouble(),
-                                        height: (24 / proportion).roundToDouble(),
+                                        width:
+                                            (24 / proportion).roundToDouble(),
+                                        height:
+                                            (24 / proportion).roundToDouble(),
                                       ),
                                       Text(
                                         "Pix",
                                         style: TextStyle(
                                           fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                              (48 / proportion).roundToDouble(),
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
                                         ),
