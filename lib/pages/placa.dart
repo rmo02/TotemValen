@@ -71,7 +71,8 @@ class _PlacaPageState extends State<PlacaPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                actualDate: enterHour,
+                enterHour: enterHour,
+                enterDate: enterDate,
                 permanecia: permanecia,
                 placa: placa,
               ),

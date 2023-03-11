@@ -12,8 +12,9 @@ class ResumoCupomPage extends StatefulWidget {
 
 class _ResumoCupomPageState extends State<ResumoCupomPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
-  String actualDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
-  String permanecia = "179h 25m";
+  String enterDate = "";
+  String enterHour = "";
+  String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
   double tarifa = 100.00;
@@ -41,11 +42,13 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               HeaderSectionItem(
-                  proportion: proportion,
-                  actualDateTime: actualDateTime,
-                  actualDate: actualDate,
-                  permanecia: permanecia,
-                  placa: placa),
+                proportion: proportion,
+                actualDateTime: actualDateTime,
+                enterHour: enterHour,
+                enterDate: enterDate,
+                permanecia: permanecia,
+                placa: placa,
+              ),
               Container(
                 height: (660 / proportion).roundToDouble(),
                 width: (1340 / proportion).roundToDouble(),

@@ -23,8 +23,6 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   String enterHour = "";
   String permanecia = "";
   String placa = "";
-  double proportion = 1.437500004211426;
-
   final TextEditingController inputPlacaController = TextEditingController();
 
   _carregarDados() async {
