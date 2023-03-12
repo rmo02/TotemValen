@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/resumo.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
@@ -25,9 +26,10 @@ class _CpfPageState extends State<CpfPage> {
   String convenio = "";
 
   _carregarDados() async {
+    final authToken = AuthToken().token;
     var response = await http.get(
       Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
-      headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiNDk3NzY5YTM4M2FjZWE1Nzk5ZTNhN2YxYzgyMjU4NDIzYWE4OWM3NjFhMmUwNjgwODhhNjU3YjlhM2M4MzIxNjI1ZTYyOGEwMWMxMTk5ZjUiLCJpYXQiOjE2Nzg2NDUxNTQuMTMwMzI1LCJuYmYiOjE2Nzg2NDUxNTQuMTMwMzI4LCJleHAiOjE2Nzg2NTA1NTQuMTI1MjI1LCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.M1vctvG5wFTgD-my86xOs6ZMh2gbH5d-zbjr9H1BfciyNNJXB1p4YIDoIAzKlRsHLvk1GZbBXloU-7wWjNuvyGZrU_B606zZlRNnJZVe5mg8bDBhRgxd9LDzbGOyMHp-VGQ960x9um_xoe81SIc_9d-uoHlAmHymbuIkmLbXsAN_krmFGnrcAnoPz64xHWsa801Qw6UwveJ8rw4aTEGVTyvLClBcDHJ9BYvTH5A15FpxxUH58HLnjN2wSi0-ydj0qBD2zaVWjgm2f8JiNZbQlbSidfLSdwpcfi7vqILCaOmhG5hMDbqN4REEuHjD0CR3Vxyf7C32Ml8hlH_eqJhOjbNxYx-rRiktbGkHvmoncF4hDCayKAEW3b3i4NJUSn8YPl3z2KLryZuSb6dW3bTXtcroFRUd9r-LkPRcjopaRT0NgAUy7tacCD6bN2l0mFGgWJtzEKZiLg7fRTMS57R4CBsbNx51e4gXIsSmS4olxeJlhTEewQIKURiO2V9TDKe08ak6eoZ_ENxnukFGs-1KuoC4flssnZle-0Z2Y5OHdekMGxvOULVRxfa9SEpderRHl_EIQPHXwkRnmpcUVG9ZS31kzmlxKDu-4RBwXrRbgFCSZWdfdfLAlVGKJO7_PeV7yGbpS4zNAJZTAQ_wUl_OhzLQs-NOb4qcnbPrQ-8ac3M'},
+      headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
