@@ -21,9 +21,9 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
             image: AssetImage("assests/fundo.png"),

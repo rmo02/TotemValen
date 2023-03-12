@@ -23,9 +23,10 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
             image: AssetImage("assests/fundo.png"),

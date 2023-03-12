@@ -29,11 +29,14 @@ class _PlacaPageState extends State<PlacaPage> {
   double proportion = 1.437500004211426;
   Object dados = [];
 
-
   _carregarDados() async {
     var response = await http.get(
-        Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
-        headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiZTFiZDc2ODE4N2UxOTQyZTc2ZmJhMmQyNDFmNmZmN2NmOTA2YWJkOTk2OGZhOTZlYTI5NjczODc4NjRjY2M1YWRkZjlmNzQ1NzFmZTMxOTMiLCJpYXQiOjE2Nzg1NzMzODYuMDgyNywibmJmIjoxNjc4NTczMzg2LjA4MjcwMywiZXhwIjoxNjc4NTc4Nzg2LjA3ODYzMSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.Z98_s2fndqesP0lCx7KjgJ-5hG_3iaHDe9VvU2xiNBeRI8WNaVe8OGlOIduBQrxQyoFE7-KHrnfTNYvqCeHKQW1o3nGHTIrKXy0Psa-uOLiDtnZ7LtYRV6S0QMkdwcQO_imdGQH9hL8NBphtuLRczoXP75p6R1hmgQDlE6YqwFsniYa5X0CtcNu1MWrO4K-XFfHI-C2YMOCtz1qQl1j7wwVtccEXcM0_rJJzBmbz_tk0emONpwuPR4ezzm8np0n5VYzew5wfBNR5RH5R1CVB_BH1Wx9LvFknDR9lXS_eW3nGL02noEi0FujaqVSd21rMq7zgYRSHft8L5V3DN4Tp6NLBie20m3uOrQRmLrPkaZN8v24vs-56g4eDTrmxjhdcDnEdBXBba9BvLgqSsFrrjmsey-lNRXkfJehJ-9fFzJxjJKCDkkvOt104b2d83m2Wp7jcA6xOUUZLYWO_0QhUT4ZHbE23YqiiVxxtuyxXQrnFrDabsgUWyKqbpAzUIcUlr-0zFcQync3Hw9ObKkiUgd7lnQLFpE7nHSS_f_68lagmNk-pvNTqS3cHSB4vmbxyWF0bMIPTHmehx2sY5B1MVykvj2bfdZILSUUe-u56WwWVlVT6F_8zgpssIf6HhFGV9LiCVE1xM3NSqb0a8TSFZe6Z2eUha3L6AdYvzdFheqI'},
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
+      headers: {
+        'Authorization':
+            'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiZTFiZDc2ODE4N2UxOTQyZTc2ZmJhMmQyNDFmNmZmN2NmOTA2YWJkOTk2OGZhOTZlYTI5NjczODc4NjRjY2M1YWRkZjlmNzQ1NzFmZTMxOTMiLCJpYXQiOjE2Nzg1NzMzODYuMDgyNywibmJmIjoxNjc4NTczMzg2LjA4MjcwMywiZXhwIjoxNjc4NTc4Nzg2LjA3ODYzMSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.Z98_s2fndqesP0lCx7KjgJ-5hG_3iaHDe9VvU2xiNBeRI8WNaVe8OGlOIduBQrxQyoFE7-KHrnfTNYvqCeHKQW1o3nGHTIrKXy0Psa-uOLiDtnZ7LtYRV6S0QMkdwcQO_imdGQH9hL8NBphtuLRczoXP75p6R1hmgQDlE6YqwFsniYa5X0CtcNu1MWrO4K-XFfHI-C2YMOCtz1qQl1j7wwVtccEXcM0_rJJzBmbz_tk0emONpwuPR4ezzm8np0n5VYzew5wfBNR5RH5R1CVB_BH1Wx9LvFknDR9lXS_eW3nGL02noEi0FujaqVSd21rMq7zgYRSHft8L5V3DN4Tp6NLBie20m3uOrQRmLrPkaZN8v24vs-56g4eDTrmxjhdcDnEdBXBba9BvLgqSsFrrjmsey-lNRXkfJehJ-9fFzJxjJKCDkkvOt104b2d83m2Wp7jcA6xOUUZLYWO_0QhUT4ZHbE23YqiiVxxtuyxXQrnFrDabsgUWyKqbpAzUIcUlr-0zFcQync3Hw9ObKkiUgd7lnQLFpE7nHSS_f_68lagmNk-pvNTqS3cHSB4vmbxyWF0bMIPTHmehx2sY5B1MVykvj2bfdZILSUUe-u56WwWVlVT6F_8zgpssIf6HhFGV9LiCVE1xM3NSqb0a8TSFZe6Z2eUha3L6AdYvzdFheqI'
+      },
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -57,9 +60,9 @@ class _PlacaPageState extends State<PlacaPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
             image: AssetImage("assests/fundo.png"),
@@ -221,7 +224,6 @@ class _PlacaPageState extends State<PlacaPage> {
                   ],
                 ),
               ),
-
 
               RealTimeClockItem(
                 proportion: proportion,
