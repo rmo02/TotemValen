@@ -30,14 +30,14 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -112,13 +112,13 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Tarifa de Estacionamento",
                                     style: TextStyle(
                                       fontSize:
-                                      (40 / proportion).roundToDouble(),
+                                          (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
                                     ),
@@ -127,7 +127,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                     "RS $tarifa",
                                     style: TextStyle(
                                       fontSize:
-                                      (40 / proportion).roundToDouble(),
+                                          (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
                                     ),
@@ -142,13 +142,13 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Cupom de desconto",
                                     style: TextStyle(
                                       fontSize:
-                                      (40 / proportion).roundToDouble(),
+                                          (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF689A28),
                                     ),
@@ -157,7 +157,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                     "-RS $desconto",
                                     style: TextStyle(
                                       fontSize:
-                                      (40 / proportion).roundToDouble(),
+                                          (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF689A28),
                                     ),
@@ -242,7 +242,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                       "Cancelar",
                                       style: TextStyle(
                                         fontSize:
-                                        (48 / proportion).roundToDouble(),
+                                            (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),
@@ -288,7 +288,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                       "Pagamento",
                                       style: TextStyle(
                                         fontSize:
-                                        (48 / proportion).roundToDouble(),
+                                            (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),
@@ -317,5 +317,5 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
 }
 
 double calculaTotal({required tarifa, required desconto}) {
-  return tarifa-desconto;
+  return tarifa - desconto;
 }

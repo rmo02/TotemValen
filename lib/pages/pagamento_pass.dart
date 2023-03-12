@@ -20,14 +20,14 @@ class _PagamentoPassPageState extends State<PagamentoPassPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -109,7 +109,7 @@ class _PagamentoPassPageState extends State<PagamentoPassPage> {
                                     "Cancelar",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
