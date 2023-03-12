@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/pages/cpf.dart';
-import 'package:totenvalen/pages/cpf_insert.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import 'package:totenvalen/widgets/real_time_clock_item.dart';
@@ -25,12 +25,17 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   String placa = "";
   double proportion = 1.437500004211426;
 
+  var placaMaskFormatter = MaskTextInputFormatter(
+    mask: '###-####',
+    filter: {'#': RegExp(r'[A-Za-z0-9]')},
+  );
+
   final TextEditingController inputPlacaController = TextEditingController();
 
   _carregarDados() async {
     var response = await http.get(
       Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
-      headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiMjQ2NDg2N2IzMGZlYmY2MzU2NzIyNWU0ZWFiNjRiZGM3NGIwN2RhZGU3Mjk4OGMxMTYzZmQxOTNmZWM5MDU1YTY3MTA5OGZhYzU5MTNlNWYiLCJpYXQiOjE2Nzg1NDg3OTcuNTE5MDMzLCJuYmYiOjE2Nzg1NDg3OTcuNTE5MDM4LCJleHAiOjE2Nzg1NTQxOTcuNTExNTQ3LCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.XbsGXfV5h0LXAp5Bzjuh2r7REzOjPB9teEh_k90E_F6Fbo9UxO5t_LUKh5JNYZC4FaWTY4TeKcSzjbCo1lRC58605aRW2rpda_a9TK0DU1giV2LMb0qHzvRzmO1ErlA0_jdLVJMwZVCeatijGBEyTQ1l5rn5RBVNHo_VK7-JhWvEFEiTpWApM1oEHMJHzRRBKzwx5eeGKKixbVxTa2eu9kMQSGBJcpeYCpVHet-6wUBqN4qXf0jrisrV5HYxKpApM-GLgCxZt_80MNeb949C8la3tII-4gwbVs7V52CnHDwvsRTGPIuf8m_H3lKdL16kqaPbQodbDp-1gGDjNbADk-FG_OXy8kKlTjfiQLKvCAjAL0zcXJj8TBJfawg6dz9cAu2TP5iDA-CEiPkoKCLKDRt448qbvrvx-dxFFJ02nG0AELGRLZ9s81HqqpYUaVRVJPsS2bzn5biYCrBV9wWy2-_FfH1ZEKJwzHWAVcXtA_LlVQQ2vdNUixawJrOcTYtzvD8adVOlVMpdLblujUpoFctL926RdYueALkUPp347h8VYqHzDmAY2Pque7IxN3RABfnO5ldmJfD_6qYRoQi0RlUyfn-2Bm7t_Dd6Pz7JxA3L64QOjlxhTH3BouJZe_Ac2nr0Dto17uICQs2kfAOcCKi5_EaKjxdGLzg-H0vj3Cc'},
+      headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiNDk3NzY5YTM4M2FjZWE1Nzk5ZTNhN2YxYzgyMjU4NDIzYWE4OWM3NjFhMmUwNjgwODhhNjU3YjlhM2M4MzIxNjI1ZTYyOGEwMWMxMTk5ZjUiLCJpYXQiOjE2Nzg2NDUxNTQuMTMwMzI1LCJuYmYiOjE2Nzg2NDUxNTQuMTMwMzI4LCJleHAiOjE2Nzg2NTA1NTQuMTI1MjI1LCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.M1vctvG5wFTgD-my86xOs6ZMh2gbH5d-zbjr9H1BfciyNNJXB1p4YIDoIAzKlRsHLvk1GZbBXloU-7wWjNuvyGZrU_B606zZlRNnJZVe5mg8bDBhRgxd9LDzbGOyMHp-VGQ960x9um_xoe81SIc_9d-uoHlAmHymbuIkmLbXsAN_krmFGnrcAnoPz64xHWsa801Qw6UwveJ8rw4aTEGVTyvLClBcDHJ9BYvTH5A15FpxxUH58HLnjN2wSi0-ydj0qBD2zaVWjgm2f8JiNZbQlbSidfLSdwpcfi7vqILCaOmhG5hMDbqN4REEuHjD0CR3Vxyf7C32Ml8hlH_eqJhOjbNxYx-rRiktbGkHvmoncF4hDCayKAEW3b3i4NJUSn8YPl3z2KLryZuSb6dW3bTXtcroFRUd9r-LkPRcjopaRT0NgAUy7tacCD6bN2l0mFGgWJtzEKZiLg7fRTMS57R4CBsbNx51e4gXIsSmS4olxeJlhTEewQIKURiO2V9TDKe08ak6eoZ_ENxnukFGs-1KuoC4flssnZle-0Z2Y5OHdekMGxvOULVRxfa9SEpderRHl_EIQPHXwkRnmpcUVG9ZS31kzmlxKDu-4RBwXrRbgFCSZWdfdfLAlVGKJO7_PeV7yGbpS4zNAJZTAQ_wUl_OhzLQs-NOb4qcnbPrQ-8ac3M'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -111,6 +116,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                         ),
                         child: TextField(
                           controller: inputPlacaController,
+                          inputFormatters: [placaMaskFormatter],
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
@@ -257,7 +263,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
     final request = http.MultipartRequest('POST', url);
     request.fields['ticket_numero'] = '196969542325';
     request.fields['placa'] = 'BBB-1c24';
-    request.headers.addAll({'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiZTFiZDc2ODE4N2UxOTQyZTc2ZmJhMmQyNDFmNmZmN2NmOTA2YWJkOTk2OGZhOTZlYTI5NjczODc4NjRjY2M1YWRkZjlmNzQ1NzFmZTMxOTMiLCJpYXQiOjE2Nzg1NzMzODYuMDgyNywibmJmIjoxNjc4NTczMzg2LjA4MjcwMywiZXhwIjoxNjc4NTc4Nzg2LjA3ODYzMSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.Z98_s2fndqesP0lCx7KjgJ-5hG_3iaHDe9VvU2xiNBeRI8WNaVe8OGlOIduBQrxQyoFE7-KHrnfTNYvqCeHKQW1o3nGHTIrKXy0Psa-uOLiDtnZ7LtYRV6S0QMkdwcQO_imdGQH9hL8NBphtuLRczoXP75p6R1hmgQDlE6YqwFsniYa5X0CtcNu1MWrO4K-XFfHI-C2YMOCtz1qQl1j7wwVtccEXcM0_rJJzBmbz_tk0emONpwuPR4ezzm8np0n5VYzew5wfBNR5RH5R1CVB_BH1Wx9LvFknDR9lXS_eW3nGL02noEi0FujaqVSd21rMq7zgYRSHft8L5V3DN4Tp6NLBie20m3uOrQRmLrPkaZN8v24vs-56g4eDTrmxjhdcDnEdBXBba9BvLgqSsFrrjmsey-lNRXkfJehJ-9fFzJxjJKCDkkvOt104b2d83m2Wp7jcA6xOUUZLYWO_0QhUT4ZHbE23YqiiVxxtuyxXQrnFrDabsgUWyKqbpAzUIcUlr-0zFcQync3Hw9ObKkiUgd7lnQLFpE7nHSS_f_68lagmNk-pvNTqS3cHSB4vmbxyWF0bMIPTHmehx2sY5B1MVykvj2bfdZILSUUe-u56WwWVlVT6F_8zgpssIf6HhFGV9LiCVE1xM3NSqb0a8TSFZe6Z2eUha3L6AdYvzdFheqI'});
+    request.headers.addAll({'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiNDE0NGYxZGYyNTc2MmU5Y2ViNzY3NzVlMGJiM2U2OTVkYmU3YWFhYzcwZDcwNjIwZDNjMDRlN2E1MzZiNDAyODhiYmQ5MTg2YThkZTA5NzYiLCJpYXQiOjE2Nzg2MjYwMzIuNTk5MTg5LCJuYmYiOjE2Nzg2MjYwMzIuNTk5MTk0LCJleHAiOjE2Nzg2MzE0MzIuNTg3MDIxLCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.PIh61WSwzJrigk1ytcAH0yT6769GTSRmSvq0qQ76cKRFSzcEMZZw8B51S1SmDBG7IdNLU100tt_HYag6E-K-6XnKa8TeHcx2DPzJ64rFSisxshrvVVNVILJK9iGnbN3x1pOwTsBjv-0I7z1U3wfnxzu36f-swfBG1i8_82mMWVG9NpH2dthxdFWvRRxoHj8i8X7UTlu7M45ycKp_4eNb4k2HsXlSU7N-2l3CB7D3DJZrCqUKTmOBgew2MALbOn1DeXFyDCgkiC375h3IfHeqwrr_CK5JitAQtUFmwGZ4lqI-tnWLUibgXY8T4DqiU5GaVv5Wo6CdgyaAubtAVS06ssJl0GLDzm20zq_1w4G-zd_AUP_c48nDHOO7igysJ1JZiSnj35msjV2_vCp74tPxI5uG9ABlFHqwGlXVdWw5Mh6LFux9-EPflCmNwn-W6XwfSlsMEegkJwcVNed3tw949LJewTcyzlRefFGTy-J0LITvLQIEfj8vqwQDYC-YI2yGYVbO8PHoLmFkySXV5zb00DerY1SlPZZVES1wbYlDUIAGJjb-Js_-lFgkrXdw0UQWAftOWt2AkBTbqOdGZIZd-e6afC2NNTy6v6fIh0Z6hfu6OLeVTkk7I09CGyRRry6dGwwdyYoUdacc3GH-jlr2VQXrhqj3jfrrIT5-ThfbdQU'});
     final resposta = await request.send();
     if (resposta.statusCode == 200){
       Navigator.push(

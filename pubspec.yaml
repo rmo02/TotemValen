@@ -42,6 +42,7 @@ dependencies:
   quiver: ^3.2.1
   flutter_launcher_icons: ^0.12.0
   http: ^0.13.5
+  mask_text_input_formatter: ^2.4.0
 
 dev_dependencies:
   flutter_test:
