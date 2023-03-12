@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../util/modal_cupom_function.dart';
 import '../widgets/real_time_clock_item.dart';
+import 'package:http/http.dart' as http;
 
 class ResumoPage extends StatefulWidget {
   const ResumoPage({Key? key}) : super(key: key);
@@ -16,10 +21,36 @@ class _ResumoPageState extends State<ResumoPage> {
   String enterDate = "";
   String enterHour = "";
   String permanecia = "";
-  String placa = "AAA-1111";
+  String placa = "";
   double proportion = 1.437500004211426;
-  double tarifa = 100.00;
-  double desconto = 20.00;
+  String tarifa = "";
+  String desconto = "0";
+
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      setState(() {
+        placa = map['dados']['ticket']['placa'];
+        permanecia = map['dados']['permanencia'][0];
+        enterDate = map['dados']['ticket']['dataEntradaDia'];
+        enterHour = map['dados']['ticket']['dataEntradaHora'];
+        tarifa = map['dados']['tarifas'][0]['valor'];
+      });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
 
   @override
   @override
@@ -235,7 +266,15 @@ class _ResumoPageState extends State<ResumoPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                      const PagamentoOKPage(),
+                                    ),
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,
