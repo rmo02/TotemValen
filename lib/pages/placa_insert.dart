@@ -57,6 +57,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(

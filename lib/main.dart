@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:totenvalen/pages/cpf.dart';
+import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/pages/pagamento_pass.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       debugShowCheckedModeBanner: false,
-      home: PlacaPage(scanResult: '',),
+      home: CpfInsertPage(),
     );
   }
 }
