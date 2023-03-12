@@ -31,6 +31,7 @@ class _CpfPageState extends State<CpfPage> {
       Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
+
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
