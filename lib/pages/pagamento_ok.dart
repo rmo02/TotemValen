@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
+import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/pages/home.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:quiver/async.dart';
+import 'package:http/http.dart' as http;
 
 class PagamentoOKPage extends StatefulWidget {
   const PagamentoOKPage({Key? key}) : super(key: key);
@@ -12,14 +19,50 @@ class PagamentoOKPage extends StatefulWidget {
 }
 
 class _PagamentoOKPageState extends State<PagamentoOKPage> {
+  bool printBinded = false;
+  int paperSize = 0;
+  String serialNumber = "";
+  String printerVersion = "";
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
-  String permanecia = "179h 25m";
-  String placa = "AAA-1111";
+  String permanecia = "";
+  String placa = "";
   double proportion = 1.437500004211426;
   int _start = 10;
   int _current = 10;
+
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      setState(() {
+        placa = map['dados']['ticket']['placa'];
+        permanecia = map['dados']['permanencia'][0];
+        enterDate = map['dados']['ticket']['dataEntradaDia'];
+        enterHour = map['dados']['ticket']['dataEntradaHora'];
+      });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  _imprimirRecibo() async {
+    await SunmiPrinter.initPrinter();
+    await SunmiPrinter.startTransactionPrint(true);
+    await SunmiPrinter.setCustomFontSize(60);
+    await SunmiPrinter.printText('Teste de recibo!');
+    await SunmiPrinter.resetFontSize();
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.exitTransactionPrint(true);
+
+    await SunmiPrinter.cut();
+  }
+
 
   void startTimer() {
     CountdownTimer countDownTimer = new CountdownTimer(
@@ -36,14 +79,48 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
 
     sub.onDone(() {
       print("Done");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
       sub.cancel();
     });
   }
 
+
   @override
   void initState() {
     super.initState();
+    _carregarDados();
     startTimer();
+    _bindingPrinter().then((bool? isBind) async {
+      SunmiPrinter.paperSize().then((int size) {
+        setState(() {
+          paperSize = size;
+        });
+      });
+
+      SunmiPrinter.printerVersion().then((String version) {
+        setState(() {
+          printerVersion = version;
+        });
+      });
+
+      SunmiPrinter.serialNumber().then((String serial) {
+        setState(() {
+          serialNumber = serial;
+        });
+      });
+
+      setState(() {
+        printBinded = isBind!;
+      });
+    });
+  }
+
+  Future<bool?> _bindingPrinter() async {
+    final bool? result = await SunmiPrinter.bindingPrinter();
+    return result;
   }
 
   @override
@@ -113,9 +190,7 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
+                              onPressed: _imprimirRecibo,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,

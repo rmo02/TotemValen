@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/pages/cpf_insert.dart';
+import 'package:totenvalen/pages/resumo.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
+import 'package:http/http.dart' as http;
 
 class CpfPage extends StatefulWidget {
   const CpfPage({Key? key}) : super(key: key);
@@ -14,9 +21,39 @@ class _CpfPageState extends State<CpfPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
-  String permanecia = "179h 25m";
-  String placa = "AAA-1111";
+  String permanecia = "";
+  String placa = "";
   double proportion = 1.437500004211426;
+  String convenio = "";
+
+
+  //get dados
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      setState(() {
+        placa = map['dados']['ticket']['placa'];
+        permanecia = map['dados']['permanencia'][0];
+        enterDate = map['dados']['ticket']['dataEntradaDia'];
+        enterHour = map['dados']['ticket']['dataEntradaHora'];
+        convenio = map['dados']['convenio'];
+      });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +116,9 @@ class _CpfPageState extends State<CpfPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => ResumoPage())
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -126,7 +165,11 @@ class _CpfPageState extends State<CpfPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => CpfInsertPage())
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,
