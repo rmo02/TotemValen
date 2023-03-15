@@ -4,18 +4,16 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:totenvalen/pages/placa_insert.dart';
-import 'package:totenvalen/util/modal_cliente_no_function.dart';
-import 'package:totenvalen/util/modal_cliente_ok_function.dart';
-import 'package:totenvalen/util/modal_transacao_cancelada_function.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import 'package:totenvalen/widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
 class PlacaPage extends StatefulWidget {
-  const PlacaPage({Key? key, required this.scanResult}) : super(key: key);
-  final String scanResult;
+  const PlacaPage({Key? key}) : super(key: key);
+
 
 
   @override
@@ -35,7 +33,7 @@ class _PlacaPageState extends State<PlacaPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-        Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
+        Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
         headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {

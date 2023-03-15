@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/placa.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
@@ -142,26 +143,24 @@ class _HomePageState extends State<HomePage> {
 
   //método scan
   Future scanBarCode() async {
-    String scanResult;
     try {
-      scanResult = await FlutterBarcodeScanner.scanBarcode(
-          "#ff6666",
-          "Cancelar",
-          false,
-          ScanMode.BARCODE
+      final scanResult = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "Cancelar",
+        false,
+        ScanMode.BARCODE,
       );
+      if (scanResult != '-1') {
+        ScanResult.setResult(scanResult);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PlacaPage()),
+        );
+      }
     } on PlatformException {
-      scanResult = 'Não foi possível a leitura';
-    }
-    if (!mounted) return;
-    setState(() => this.scanResult = scanResult);
-
-    if (scanResult != '-1') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PlacaPage(scanResult: scanResult)),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Não foi possível ler o código de barras')),
       );
     }
-
   }
 }
