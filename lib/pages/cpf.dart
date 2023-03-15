@@ -26,6 +26,8 @@ class _CpfPageState extends State<CpfPage> {
   double proportion = 1.437500004211426;
   String convenio = "";
 
+
+  //get dados
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
