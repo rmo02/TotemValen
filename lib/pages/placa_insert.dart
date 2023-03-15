@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:totenvalen/pages/home.dart';
@@ -37,7 +38,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
+      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {

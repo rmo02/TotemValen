@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../util/modal_cupom_function.dart';
@@ -29,7 +30,7 @@ class _ResumoPageState extends State<ResumoPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
+      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {

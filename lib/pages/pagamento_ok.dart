@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/pages/home.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:quiver/async.dart';
@@ -33,8 +35,8 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/1969695423'),
-      headers: {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5IiwianRpIjoiNTU4NTNlYTY1ZGY5NDVhM2Q0OTk4MmJiZjFiNjIyZDI3ZTVkOTM2MWI3MmJmZTk4YWM1Mjg1YWMwMDFlYTE3NWIyNWY0NGYxMTNhZjc1NjUiLCJpYXQiOjE2Nzg2NDkxODEuNTAzOTU0LCJuYmYiOjE2Nzg2NDkxODEuNTAzOTU3LCJleHAiOjE2Nzg2NTQ1ODEuNDk4MjQ0LCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.LEwT6IcpgY-DFitmb7ONLyktb6-pn8YOl7Ve1AENq5iDxbNb5UJVsRo7qmjk5viB5CabWS0gDZd3cTGaaC5dpC2vUIYQ59mT48GmCS2yo0U0L9SaM-BqbxDjL1j54fe0JkQJ4y9FJP-jj4FMV7wtJ8CkiiEbjTvzzL_YYwfMvC-e7dxqgmFnBLETn3nSV19_NFS3JDPFVy6OTPgHPxIsFWnuSlWsLgttHIzpVBdSe8mQhlISV1zEOB1InooEdNab0VbW_-FEv0vj0Incrsy1IVJQVMuFn1is-cE5AKGoe2KhWKRmPUCUpoBleE9a2Re4zxvl1KjQe5xUbBz_-AsxVu9A6ZWB6QyaD6ai8tuWLrQQscGDovgUG_HxLBaPCCLeS85fpimHuSGQcWUaNC4n3wgA72Ky9Z56ELsmIaP3gu-StjPrJc-iub8NsQ4qZVE1KgbvWgkijNHGLaDBS2hR3a25J3pSEJaKrwzgIjFLzIOvFujNkpTgsEyLn__QBhqf6lVUlpXJ3kq-MekyN4FUsbFvmgEm3PRaNvvcqKMev9EimIDMosH4T-ru4lXi-Tu9Xh3OYfGNQC8HttsyAjTfY5ZHPVxa561bNWAwuw-Ndr_gTEDNADQVw3wG89Xa4iudQD5edIiVTOZWVTGgAzXJM6BLA_hUJua6A5nlMBhUNkY'},
+      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -77,6 +79,10 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
 
     sub.onDone(() {
       print("Done");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
       sub.cancel();
     });
   }
