@@ -29,7 +29,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
-  bool convenio = true;
+  bool convenio = false;
 
   var placaMaskFormatter = MaskTextInputFormatter(
     mask: '###-####',

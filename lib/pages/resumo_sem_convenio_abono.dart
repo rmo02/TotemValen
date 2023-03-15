@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/pages/pagamento_select.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 
-class ResumoCupomPage extends StatefulWidget {
-  const ResumoCupomPage({Key? key}) : super(key: key);
+class ResumoSemConvenioAbonoPage extends StatefulWidget {
+  const ResumoSemConvenioAbonoPage({Key? key}) : super(key: key);
 
   @override
-  State<ResumoCupomPage> createState() => _ResumoCupomPageState();
+  State<ResumoSemConvenioAbonoPage> createState() =>
+      _ResumoSemConvenioAbonoPageState();
 }
 
-class _ResumoCupomPageState extends State<ResumoCupomPage> {
+class _ResumoSemConvenioAbonoPageState
+    extends State<ResumoSemConvenioAbonoPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
@@ -267,7 +270,15 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PagamentoSelectPage(),
+                                    ),
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,

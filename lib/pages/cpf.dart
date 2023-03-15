@@ -25,7 +25,7 @@ class _CpfPageState extends State<CpfPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
-  bool convenio = true;
+  bool convenio = false;
 
   //get dados
   _carregarDados() async {
@@ -180,7 +180,7 @@ class _CpfPageState extends State<CpfPage> {
                                         )
                                       : MaterialPageRoute(
                                           builder: (context) =>
-                                              const ResumoSemConvenioPage(),
+                                              const CpfInsertPage(),
                                         ),
                                 );
                               },

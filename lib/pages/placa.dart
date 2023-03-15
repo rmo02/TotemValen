@@ -30,7 +30,7 @@ class _PlacaPageState extends State<PlacaPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
-  bool convenio = true;
+  bool convenio = false;
 
 
   _carregarDados() async {

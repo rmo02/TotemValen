@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 
 import '../model/authToken.dart';
 import '../widgets/header_section_item.dart';
@@ -24,7 +25,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
   String permanecia = "179h 25m";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
-  bool convenio = true;
+  bool convenio = false;
 
   final TextEditingController inputCPFController = TextEditingController();
 
@@ -222,7 +223,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                               const CpfPage(),
                                         )
                                       : MaterialPageRoute(
-                                          builder: (context) => const CpfInsertPage(),
+                                          builder: (context) => const ResumoSemConvenioPage(),
                                         ),
                                 );
                               },

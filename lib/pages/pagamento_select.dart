@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/pages/pagamento_pix.dart';
+import 'package:totenvalen/pages/pagamento_wait.dart';
 
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -80,7 +82,13 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                 ),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PagamentoWaitPage(),
+                                      ),
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -129,7 +137,15 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                       (15 / proportion).roundToDouble()),
                                 ),
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PagamentoWaitPage(),
+                                      ),
+                                    );
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
                                     disabledForegroundColor: Colors.transparent,
@@ -184,7 +200,13 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                 ),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PagamentoPixPage(),
+                                      ),
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -195,7 +217,7 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        Icons.block,
+                                        Icons.monetization_on_outlined,
                                         size: (50 / proportion).roundToDouble(),
                                       ),
                                       SizedBox(
