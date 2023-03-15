@@ -9,6 +9,10 @@ import 'package:totenvalen/widgets/header_section_item.dart';
 import 'package:totenvalen/widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
+import '../util/modal_cliente_no_function.dart';
+import '../util/modal_cliente_ok_function.dart';
+import 'cpf_insert.dart';
+
 class PlacaPage extends StatefulWidget {
   const PlacaPage({Key? key}) : super(key: key);
 
@@ -26,6 +30,7 @@ class _PlacaPageState extends State<PlacaPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
+  bool convenio = true;
 
 
   _carregarDados() async {
@@ -53,6 +58,7 @@ class _PlacaPageState extends State<PlacaPage> {
     _carregarDados();
   }
 
+  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
@@ -176,15 +182,29 @@ class _PlacaPageState extends State<PlacaPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CpfPage()),
-                                );
+                              onPressed: () async {
 
-                                // AQUI O MODAL
-                                // showModalTransacaoCancelada(context);
+                                isConveniado
+                                    ? showModalClienteOk(context)
+                                    : showModalClienteNo(context);
+
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+
+                                if (mounted) {
+                                  Navigator.push(
+                                    context,
+                                    isConveniado
+                                        ? MaterialPageRoute(
+                                      builder: (context) =>
+                                      const CpfInsertPage(),
+                                    )
+                                        : MaterialPageRoute(
+                                      builder: (context) =>
+                                      const CpfPage(),
+                                    ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,

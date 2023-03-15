@@ -10,14 +10,14 @@ import '../util/modal_cupom_function.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
-class ResumoPage extends StatefulWidget {
-  const ResumoPage({Key? key}) : super(key: key);
+class ResumoSemConvenioPage extends StatefulWidget {
+  const ResumoSemConvenioPage({Key? key}) : super(key: key);
 
   @override
-  State<ResumoPage> createState() => _ResumoPageState();
+  State<ResumoSemConvenioPage> createState() => _ResumoSemConvenioPageState();
 }
 
-class _ResumoPageState extends State<ResumoPage> {
+class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
@@ -145,7 +145,7 @@ class _ResumoPageState extends State<ResumoPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Tarifa de Estacionamento",
+                                    "Estacionamento",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),

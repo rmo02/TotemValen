@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:totenvalen/pages/home.dart';
+import 'package:totenvalen/pages/placa.dart';
 
 
 void main() {
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: PlacaPage(),
     );
   }
 }
