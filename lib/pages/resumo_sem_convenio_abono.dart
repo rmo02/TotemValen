@@ -349,7 +349,6 @@ class _ResumoSemConvenioAbonoPageState
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

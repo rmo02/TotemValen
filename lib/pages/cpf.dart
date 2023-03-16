@@ -225,7 +225,6 @@ class _CpfPageState extends State<CpfPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

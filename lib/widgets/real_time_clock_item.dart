@@ -1,20 +1,31 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RealTimeClockItem extends StatefulWidget {
   RealTimeClockItem({
     Key? key,
     required this.proportion,
-    required this.actualDateTime,
   }) : super(key: key);
 
   final double proportion;
-  String actualDateTime;
 
   @override
   State<RealTimeClockItem> createState() => _RealTimeClockItemState();
 }
 
 class _RealTimeClockItemState extends State<RealTimeClockItem> {
+
+  String _timeString = "";
+
+  @override
+  void initState() {
+    _timeString = _formatDateTime(DateTime.now());
+    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -35,7 +46,7 @@ class _RealTimeClockItemState extends State<RealTimeClockItem> {
         ),
         child: Center(
           child: Text(
-            widget.actualDateTime,
+            _timeString,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -46,5 +57,17 @@ class _RealTimeClockItemState extends State<RealTimeClockItem> {
         ),
       ),
     );
+  }
+
+  void _getTime() {
+    final DateTime now = DateTime.now();
+    final String formattedDateTime = _formatDateTime(now);
+    setState(() {
+      _timeString = formattedDateTime;
+    });
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('HH:mm:ss').format(dateTime);
   }
 }

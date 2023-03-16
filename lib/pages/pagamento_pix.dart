@@ -163,7 +163,6 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

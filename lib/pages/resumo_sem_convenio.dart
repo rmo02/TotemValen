@@ -323,7 +323,6 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? scanResult;
-  String tdata = DateFormat("HH:mm").format(DateTime.now());
+  String tdata = "";
   bool pago = true;
 
   _carregarDados() async {
@@ -60,6 +61,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    tdata = _formatDateTime(DateTime.now());
+    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
     _authToken();
   }
@@ -194,5 +197,17 @@ class _HomePageState extends State<HomePage> {
         SnackBar(content: Text('Não foi possível ler o código de barras')),
       );
     }
+  }
+
+  void _getTime() {
+    final DateTime now = DateTime.now();
+    final String formattedDateTime = _formatDateTime(now);
+    setState(() {
+      tdata = formattedDateTime;
+    });
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('HH:mm').format(dateTime);
   }
 }

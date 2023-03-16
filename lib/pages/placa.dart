@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -243,7 +244,6 @@ class _PlacaPageState extends State<PlacaPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

@@ -285,7 +285,6 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

@@ -164,7 +164,6 @@ class _PagamentoWaitPageState extends State<PagamentoWaitPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

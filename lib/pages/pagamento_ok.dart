@@ -229,7 +229,6 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
 
               RealTimeClockItem(
                 proportion: proportion,
-                actualDateTime: actualDateTime,
               ),
             ],
           ),

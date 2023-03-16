@@ -279,7 +279,6 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],
