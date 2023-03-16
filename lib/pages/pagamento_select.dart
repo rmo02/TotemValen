@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:totenvalen/pages/pagamento_pix.dart';
 import 'package:totenvalen/pages/pagamento_wait.dart';
 
+import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 
@@ -247,9 +248,15 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),

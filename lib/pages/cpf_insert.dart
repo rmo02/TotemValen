@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 
 import '../model/authToken.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:totenvalen/model/scan_result.dart';
@@ -219,11 +220,11 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                   context,
                                   isConveniado
                                       ? MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CpfPage(),
+                                          builder: (context) => const CpfPage(),
                                         )
                                       : MaterialPageRoute(
-                                          builder: (context) => const ResumoSemConvenioPage(),
+                                          builder: (context) =>
+                                              const ResumoSemConvenioPage(),
                                         ),
                                 );
                               },
@@ -262,8 +263,16 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                  proportion: proportion, actualDateTime: actualDateTime),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
+              ),
             ],
           ),
         ),

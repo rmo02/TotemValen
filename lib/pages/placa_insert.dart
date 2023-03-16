@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../model/authToken.dart';
 import '../util/modal_cliente_no_function.dart';
 import '../util/modal_cliente_ok_function.dart';
+import '../widgets/cancel_button_item.dart';
 import 'cpf_insert.dart';
 
 class PlacaInsertPage extends StatefulWidget {
@@ -41,7 +42,8 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
@@ -223,7 +225,6 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () async {
-
                                 isConveniado
                                     ? showModalClienteOk(context)
                                     : showModalClienteNo(context);
@@ -236,13 +237,13 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                                     context,
                                     isConveniado
                                         ? MaterialPageRoute(
-                                      builder: (context) =>
-                                      const CpfInsertPage(),
-                                    )
+                                            builder: (context) =>
+                                                const CpfInsertPage(),
+                                          )
                                         : MaterialPageRoute(
-                                      builder: (context) =>
-                                      const CpfPage(),
-                                    ),
+                                            builder: (context) =>
+                                                const CpfPage(),
+                                          ),
                                   );
                                 }
                               },
@@ -281,8 +282,16 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                  proportion: proportion, actualDateTime: actualDateTime),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
+              ),
             ],
           ),
         ),
@@ -291,9 +300,10 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   }
 
   //metodo de alterar placa
-    Future<void>alterarPlaca () async {
+  Future<void> alterarPlaca() async {
     final authToken = AuthToken().token;
-    final url = Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/placa/atualizar');
+    final url = Uri.parse(
+        'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/placa/atualizar');
     final request = http.MultipartRequest('POST', url);
     request.fields['ticket_numero'] = '${ScanResult.result}';
     request.fields['placa'] = 'BBB-1c24';

@@ -7,6 +7,7 @@ import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../util/modal_cupom_function.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +31,8 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
@@ -272,7 +274,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                      const PagamentoOKPage(),
+                                          const PagamentoOKPage(),
                                     ),
                                   );
                                 },
@@ -312,9 +314,15 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/pages/pagamento_select.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
 
 class ResumoSemConvenioAbonoPage extends StatefulWidget {
@@ -315,9 +316,15 @@ class _ResumoSemConvenioAbonoPageState
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),

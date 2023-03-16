@@ -5,6 +5,7 @@ import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:totenvalen/pages/placa_insert.dart';
+import 'package:totenvalen/widgets/cancel_button_item.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import 'package:totenvalen/widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
@@ -16,11 +17,8 @@ import 'cpf_insert.dart';
 class PlacaPage extends StatefulWidget {
   const PlacaPage({Key? key}) : super(key: key);
 
-
-
   @override
   State<PlacaPage> createState() => _PlacaPageState();
-
 }
 
 class _PlacaPageState extends State<PlacaPage> {
@@ -32,12 +30,12 @@ class _PlacaPageState extends State<PlacaPage> {
   double proportion = 1.437500004211426;
   bool convenio = false;
 
-
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-        Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
-        headers: {'Authorization': 'Bearer $authToken'},
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -62,7 +60,6 @@ class _PlacaPageState extends State<PlacaPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -183,7 +180,6 @@ class _PlacaPageState extends State<PlacaPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () async {
-
                                 isConveniado
                                     ? showModalClienteOk(context)
                                     : showModalClienteNo(context);
@@ -196,13 +192,13 @@ class _PlacaPageState extends State<PlacaPage> {
                                     context,
                                     isConveniado
                                         ? MaterialPageRoute(
-                                      builder: (context) =>
-                                      const CpfInsertPage(),
-                                    )
+                                            builder: (context) =>
+                                                const CpfInsertPage(),
+                                          )
                                         : MaterialPageRoute(
-                                      builder: (context) =>
-                                      const CpfPage(),
-                                    ),
+                                            builder: (context) =>
+                                                const CpfPage(),
+                                          ),
                                   );
                                 }
                               },
@@ -241,9 +237,15 @@ class _PlacaPageState extends State<PlacaPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),

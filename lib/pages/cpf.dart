@@ -8,6 +8,7 @@ import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/resumo_com_convenio.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
@@ -219,9 +220,15 @@ class _CpfPageState extends State<CpfPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),
