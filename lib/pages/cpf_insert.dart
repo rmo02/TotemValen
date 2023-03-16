@@ -268,7 +268,6 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

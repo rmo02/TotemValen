@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/placa.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
+import 'package:totenvalen/util/modal_ticket_pago.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,10 +18,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? scanResult;
-  String tdata = DateFormat("HH:mm").format(DateTime.now());
+  String tdata = "";
+  bool pago = true;
 
-
-
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      // setState(() {
+      //   pago = map['dados']['ticket_pago'];
+      // });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
 
   _authToken() async {
     Map<String, dynamic> data = {
@@ -44,9 +61,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    tdata = _formatDateTime(DateTime.now());
+    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
     _authToken();
   }
+
+  bool get isPago => pago;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +93,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               child: Center(
-                child: Text(tdata,
+                child: Text(
+                  tdata,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -83,36 +105,36 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Center(
-              child: SizedBox(
-                height: 350,
-                width: 900,
-                child: ElevatedButton(
+                child: SizedBox(
+              height: 350,
+              width: 900,
+              child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    primary: Colors.white
-                  ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      primary: Colors.white),
                   onPressed: scanBarCode,
                   child: SizedBox(
                     height: 335,
                     width: 890,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            colors: [
-                              Color(0xFFFF875E),
-                              Color(0xFFFA6900)
-                              //add more colors
-                            ]),
+                        gradient: LinearGradient(colors: [
+                          Color(0xFFFF875E),
+                          Color(0xFFFA6900)
+                          //add more colors
+                        ]),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      child: const Center(child: Text('Toque para pagar seu ticket', style: TextStyle(fontSize: 30),)),
+                      child: const Center(
+                          child: Text(
+                        'Toque para pagar seu ticket',
+                        style: TextStyle(fontSize: 30),
+                      )),
                     ),
-                  )
-                ),
-              )
-            ),
+                  )),
+            )),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 100,
@@ -124,7 +146,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               child: Center(
-                child: Text(tdata,
+                child: Text(
+                  tdata,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -137,7 +160,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
     );
   }
 
@@ -152,15 +174,40 @@ class _HomePageState extends State<HomePage> {
       );
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PlacaPage()),
-        );
+
+        _carregarDados();
+
+        if (isPago) {
+          showModalTicketPago(context);
+
+          await Future.delayed(const Duration(seconds: 4));
+
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlacaPage()),
+          );
+        }
       }
     } on PlatformException {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Não foi possível ler o código de barras')),
       );
     }
+  }
+
+  void _getTime() {
+    final DateTime now = DateTime.now();
+    final String formattedDateTime = _formatDateTime(now);
+    setState(() {
+      tdata = formattedDateTime;
+    });
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('HH:mm').format(dateTime);
   }
 }

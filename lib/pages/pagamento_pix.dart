@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../model/authToken.dart';
+import '../model/scan_result.dart';
 import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
+import 'package:http/http.dart' as http;
 
 class PagamentoPixPage extends StatefulWidget {
   const PagamentoPixPage({Key? key}) : super(key: key);
@@ -19,6 +24,32 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
+
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      setState(() {
+        placa = map['dados']['ticket']['placa'];
+        permanecia = map['dados']['permanencia'][0];
+        enterDate = map['dados']['ticket']['dataEntradaDia'];
+        enterHour = map['dados']['ticket']['dataEntradaHora'];
+      });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +163,6 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

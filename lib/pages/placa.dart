@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +45,7 @@ class _PlacaPageState extends State<PlacaPage> {
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
+        convenio = map['dados']['convenio'];
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -242,7 +244,6 @@ class _PlacaPageState extends State<PlacaPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],

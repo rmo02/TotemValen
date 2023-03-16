@@ -131,7 +131,6 @@ class _PagamentoPassPageState extends State<PagamentoPassPage> {
                 children: [
                   RealTimeClockItem(
                     proportion: proportion,
-                    actualDateTime: actualDateTime,
                   ),
                   CancelButtonItem(proportion: proportion),
                 ],
