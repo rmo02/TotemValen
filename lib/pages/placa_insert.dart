@@ -53,9 +53,22 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
+        convenio = map['dados']['convenio'];
       });
     } else {
       throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  _postPlaca() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/placa/atualizar/'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+
     }
   }
 
@@ -224,29 +237,8 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () async {
-                                isConveniado
-                                    ? showModalClienteOk(context)
-                                    : showModalClienteNo(context);
 
-                                await Future.delayed(
-                                    const Duration(seconds: 2));
-
-                                if (mounted) {
-                                  Navigator.push(
-                                    context,
-                                    isConveniado
-                                        ? MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CpfInsertPage(),
-                                          )
-                                        : MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CpfPage(),
-                                          ),
-                                  );
-                                }
-                              },
+                              onPressed: alterarPlaca,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,
@@ -305,20 +297,73 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
     final url = Uri.parse(
         'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/placa/atualizar');
     final request = http.MultipartRequest('POST', url);
-    request.fields['ticket_numero'] = '${ScanResult.result}';
-    request.fields['placa'] = 'BBB-1c24';
-    request.headers.addAll({'Authorization': 'Bearer $authToken'});
+    request.fields['ticket_numero'] = '1970287849';
+    // request.fields['ticket_numero'] = '${ScanResult.result}';
+    request.fields['placa'] = inputPlacaController.text;
+
+    // request.headers.addAll({'Authorization': 'Bearer $authToken'});
+    request.headers.addAll({'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMSIsImp0aSI6ImRkNjkzZDdkMzU1Y2VkMTBlZDMzMDZhZjY1ODU5Y2FjODM5ZTU2ZjEyYzNhNGFjMDExYTcxMzQ3ZDNjMDY5Y2Q1OWMyZTRhNTQxYzY4ZWE5IiwiaWF0IjoxNjc4OTkxMTc1LjMyODc2LCJuYmYiOjE2Nzg5OTExNzUuMzI4NzY0LCJleHAiOjE2Nzg5OTY1NzUuMzE4NzcyLCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.oAQB7p-6kX_KAND6OO1jOBGXr06_qAJS7GgIfjki1anJlu3uad94cgTP5t8mhejAKVddAI4SFVUH13dJreVNBqtXtXgzOTDzVwUipvAlqilva1T5DQ6LSAiacNVwsqJmKdaDXjfXVffUKyO793LZigqSsMK-U26w73nVWOHSGjhW_2Eh_4Ri_6ZtCHp9bdytHouY3W-w4pdaUb0_nM39ATlLnzmpPIKPB05KbgNVf4LPif0m1qa_VQpmBRzbhTO-IClaFwux7Vw7ChKgsRVWE3UktSudp4fUD-fIuUdxHYPwl4IAav-Jfor2PD5zpKliw-tsmhhZGVORHZxGdpcAV__q91smq8Dju-VsEDbI58CsqeYXLjXTYbRpjqhg0eyrbcbVbN5Mz5T2BwunRXPtQAhSPRHlxSZeNvPcN9uiZqI-Exp9YkdLceqRKPtLVdy4ygDGH2jdWHZ0o82cNfM79tvBboXFUE80sr4XWyEruZVE0TavtF13R0Gmg0_XFf1IhNatgdcouSJowYkm9GDLjHShz_gvEQrT3xaD69VqI6-jnLQ0a5Qk4KkSIfSnk0wyHPwjmxXCYX1bO0QfAVp15oIl2UbYqlg3rH2xoc6MiuIxpoe1759W_jMYfrosHRIr20lnWGM5k8h_YWJPlAwJC9PvlkbDOfUdisPbsAwmcRs'});
     final resposta = await request.send();
+
+    print(resposta.statusCode);
     if (resposta.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CpfPage()),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      print("entrou");
+      print(resposta);
+
+
+
+      isConveniado ? showModalClienteOk(context) : showModalClienteNo(context);
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          isConveniado
+              ? MaterialPageRoute(
+                  builder: (context) => const CpfInsertPage(),
+                )
+              : MaterialPageRoute(
+                  builder: (context) => const CpfPage(),
+                ),
+        );
+      }
     }
+
+    // if (resposta.statusCode == 200) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => CpfPage()),
+    //   );
+    // } else {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => HomePage()),
+    //   );
+    // }
   }
 }
+
+// onPressed: () async {
+//   isConveniado
+//       ? showModalClienteOk(context)
+//       : showModalClienteNo(context);
+//
+//   await Future.delayed(
+//       const Duration(seconds: 2));
+//
+//   if (mounted) {
+//     Navigator.push(
+//       context,
+//       isConveniado
+//           ? MaterialPageRoute(
+//               builder: (context) =>
+//                   const CpfInsertPage(),
+//             )
+//           : MaterialPageRoute(
+//               builder: (context) =>
+//                   const CpfPage(),
+//             ),
+//     );
+//   }
+// },

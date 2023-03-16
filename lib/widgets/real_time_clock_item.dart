@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class RealTimeClockItem extends StatefulWidget {
-  const RealTimeClockItem({
+  RealTimeClockItem({
     Key? key,
     required this.proportion,
     required this.actualDateTime,
   }) : super(key: key);
 
   final double proportion;
-  final String actualDateTime;
+  String actualDateTime;
 
   @override
   State<RealTimeClockItem> createState() => _RealTimeClockItemState();
