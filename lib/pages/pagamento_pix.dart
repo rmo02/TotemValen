@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 
@@ -126,9 +127,15 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
                 ),
               ),
 
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),

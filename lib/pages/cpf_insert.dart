@@ -1,8 +1,16 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 
+import '../model/authToken.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
+import 'package:totenvalen/model/scan_result.dart';
+import 'package:http/http.dart' as http;
+
+import 'cpf.dart';
 
 class CpfInsertPage extends StatefulWidget {
   const CpfInsertPage({Key? key}) : super(key: key);
@@ -18,8 +26,38 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
   String permanecia = "179h 25m";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
+  bool convenio = false;
 
   final TextEditingController inputCPFController = TextEditingController();
+
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      setState(() {
+        placa = map['dados']['ticket']['placa'];
+        permanecia = map['dados']['permanencia'][0];
+        enterDate = map['dados']['ticket']['dataEntradaDia'];
+        enterHour = map['dados']['ticket']['dataEntradaHora'];
+        convenio = map['dados']['convenio'];
+      });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
+
+  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +215,19 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  isConveniado
+                                      ? MaterialPageRoute(
+                                          builder: (context) => const CpfPage(),
+                                        )
+                                      : MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ResumoSemConvenioPage(),
+                                        ),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,
@@ -213,8 +263,16 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                  proportion: proportion, actualDateTime: actualDateTime),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
+              ),
             ],
           ),
         ),

@@ -11,6 +11,10 @@ import 'package:totenvalen/widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/authToken.dart';
+import '../util/modal_cliente_no_function.dart';
+import '../util/modal_cliente_ok_function.dart';
+import '../widgets/cancel_button_item.dart';
+import 'cpf_insert.dart';
 
 class PlacaInsertPage extends StatefulWidget {
   const PlacaInsertPage({Key? key}) : super(key: key);
@@ -26,6 +30,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
+  bool convenio = false;
 
   var placaMaskFormatter = MaskTextInputFormatter(
     mask: '###-####',
@@ -37,7 +42,8 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
@@ -58,6 +64,8 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
     super.initState();
     _carregarDados();
   }
+
+  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +224,29 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: alterarPlaca,
+                              onPressed: () async {
+                                isConveniado
+                                    ? showModalClienteOk(context)
+                                    : showModalClienteNo(context);
+
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+
+                                if (mounted) {
+                                  Navigator.push(
+                                    context,
+                                    isConveniado
+                                        ? MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CpfInsertPage(),
+                                          )
+                                        : MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CpfPage(),
+                                          ),
+                                  );
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,
@@ -252,8 +282,16 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                  proportion: proportion, actualDateTime: actualDateTime),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
+              ),
             ],
           ),
         ),
@@ -262,9 +300,10 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   }
 
   //metodo de alterar placa
-    Future<void>alterarPlaca () async {
+  Future<void> alterarPlaca() async {
     final authToken = AuthToken().token;
-    final url = Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/placa/atualizar');
+    final url = Uri.parse(
+        'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/placa/atualizar');
     final request = http.MultipartRequest('POST', url);
     request.fields['ticket_numero'] = '${ScanResult.result}';
     request.fields['placa'] = 'BBB-1c24';

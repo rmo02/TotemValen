@@ -1,33 +1,61 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
+import '../util/modal_cupom_function.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
+import 'package:http/http.dart' as http;
 
-class ResumoCupomPage extends StatefulWidget {
-  const ResumoCupomPage({Key? key}) : super(key: key);
+class ResumoComConvenioPage extends StatefulWidget {
+  const ResumoComConvenioPage({Key? key}) : super(key: key);
 
   @override
-  State<ResumoCupomPage> createState() => _ResumoCupomPageState();
+  State<ResumoComConvenioPage> createState() => _ResumoComConvenioPageState();
 }
 
-class _ResumoCupomPageState extends State<ResumoCupomPage> {
+class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
   String permanecia = "";
-  String placa = "AAA-1111";
+  String placa = "";
   double proportion = 1.437500004211426;
-  double tarifa = 100.00;
-  double desconto = 20.00;
-  double? total = 0;
+  String tarifa = "";
+  String desconto = "0";
+
+  _carregarDados() async {
+    final authToken = AuthToken().token;
+    var response = await http.get(
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      setState(() {
+        placa = map['dados']['ticket']['placa'];
+        permanecia = map['dados']['permanencia'][0];
+        enterDate = map['dados']['ticket']['dataEntradaDia'];
+        enterHour = map['dados']['ticket']['dataEntradaHora'];
+        tarifa = map['dados']['tarifas'][0]['valor'];
+      });
+    } else {
+      throw Exception('Erro ao carregar dados');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    total = calculaTotal(tarifa: tarifa, desconto: desconto);
-    print(total);
+    _carregarDados();
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -53,9 +81,13 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                 height: (660 / proportion).roundToDouble(),
                 width: (1340 / proportion).roundToDouble(),
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                        Radius.circular((12 / proportion).roundToDouble()))),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(
+                      (12 / proportion).roundToDouble(),
+                    ),
+                  ),
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -115,7 +147,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Tarifa de Estacionamento",
+                                    "Estacionamento",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -130,36 +162,6 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                           (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Colocar if aqui (caso tenha desconto)
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: (16 / proportion).roundToDouble(),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Cupom de desconto",
-                                    style: TextStyle(
-                                      fontSize:
-                                          (40 / proportion).roundToDouble(),
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF689A28),
-                                    ),
-                                  ),
-                                  Text(
-                                    "-RS $desconto",
-                                    style: TextStyle(
-                                      fontSize:
-                                          (40 / proportion).roundToDouble(),
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF689A28),
                                     ),
                                   ),
                                 ],
@@ -189,7 +191,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                             ),
                           ),
                           Text(
-                            "RS $total",
+                            "RS $tarifa",
                             style: TextStyle(
                               fontSize: (48 / proportion).roundToDouble(),
                               fontWeight: FontWeight.w700,
@@ -220,7 +222,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  showModalCupom(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
@@ -267,7 +269,15 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const PagamentoOKPage(),
+                                    ),
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,
@@ -285,7 +295,7 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                                       height: (24 / proportion).roundToDouble(),
                                     ),
                                     Text(
-                                      "Pagamento",
+                                      "Liberar saída",
                                       style: TextStyle(
                                         fontSize:
                                             (48 / proportion).roundToDouble(),
@@ -304,9 +314,15 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),
@@ -314,8 +330,4 @@ class _ResumoCupomPageState extends State<ResumoCupomPage> {
       ),
     );
   }
-}
-
-double calculaTotal({required tarifa, required desconto}) {
-  return tarifa - desconto;
 }

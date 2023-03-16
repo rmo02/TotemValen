@@ -1,23 +1,30 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/scan_cupom.dart';
 import 'package:totenvalen/model/scan_result.dart';
+
 import 'package:totenvalen/pages/pagamento_ok.dart';
+import 'package:totenvalen/pages/pagamento_select.dart';
+import 'package:totenvalen/pages/resumo_sem_convenio_abono.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../util/modal_cupom_function.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-class ResumoPage extends StatefulWidget {
-  const ResumoPage({Key? key}) : super(key: key);
+class ResumoSemConvenioPage extends StatefulWidget {
+  const ResumoSemConvenioPage({Key? key}) : super(key: key);
 
   @override
-  State<ResumoPage> createState() => _ResumoPageState();
+  State<ResumoSemConvenioPage> createState() => _ResumoSemConvenioPageState();
 }
 
-class _ResumoPageState extends State<ResumoPage> {
+class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
@@ -30,7 +37,8 @@ class _ResumoPageState extends State<ResumoPage> {
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
@@ -145,7 +153,7 @@ class _ResumoPageState extends State<ResumoPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Tarifa de Estacionamento",
+                                    "Estacionamento",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -219,9 +227,7 @@ class _ResumoPageState extends State<ResumoPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: () {
-                                  showModalCupom(context);
-                                },
+                                onPressed: scanBarCode,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,
@@ -272,7 +278,7 @@ class _ResumoPageState extends State<ResumoPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                      const PagamentoOKPage(),
+                                          PagamentoSelectPage(),
                                     ),
                                   );
                                 },
@@ -312,14 +318,43 @@ class _ResumoPageState extends State<ResumoPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  //método scan
+  Future scanBarCode() async {
+    try {
+      final scanResultCupom = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "Cancelar",
+        false,
+        ScanMode.BARCODE,
+      );
+      if (scanResultCupom != '-1') {
+        ScanCupom.setResult(scanResultCupom);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ResumoSemConvenioAbonoPage()),
+        );
+      }
+    } on PlatformException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Não foi possível ler o código de barras')),
+      );
+    }
   }
 }

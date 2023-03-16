@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf_insert.dart';
-import 'package:totenvalen/pages/resumo.dart';
+import 'package:totenvalen/pages/resumo_com_convenio.dart';
+import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
+import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,14 +26,14 @@ class _CpfPageState extends State<CpfPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
-  String convenio = "";
-
+  bool convenio = false;
 
   //get dados
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
 
@@ -54,6 +56,8 @@ class _CpfPageState extends State<CpfPage> {
     super.initState();
     _carregarDados();
   }
+
+  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +120,11 @@ class _CpfPageState extends State<CpfPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) => ResumoPage())
-                                );
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ResumoSemConvenioPage()));
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -166,8 +172,17 @@ class _CpfPageState extends State<CpfPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) => CpfInsertPage())
+                                Navigator.push(
+                                  context,
+                                  isConveniado
+                                      ? MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ResumoComConvenioPage(),
+                                        )
+                                      : MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CpfInsertPage(),
+                                        ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -205,9 +220,15 @@ class _CpfPageState extends State<CpfPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),

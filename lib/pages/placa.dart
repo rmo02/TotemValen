@@ -5,18 +5,20 @@ import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:totenvalen/pages/placa_insert.dart';
+import 'package:totenvalen/widgets/cancel_button_item.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import 'package:totenvalen/widgets/real_time_clock_item.dart';
 import 'package:http/http.dart' as http;
 
+import '../util/modal_cliente_no_function.dart';
+import '../util/modal_cliente_ok_function.dart';
+import 'cpf_insert.dart';
+
 class PlacaPage extends StatefulWidget {
   const PlacaPage({Key? key}) : super(key: key);
 
-
-
   @override
   State<PlacaPage> createState() => _PlacaPageState();
-
 }
 
 class _PlacaPageState extends State<PlacaPage> {
@@ -26,13 +28,14 @@ class _PlacaPageState extends State<PlacaPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
-
+  bool convenio = false;
 
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-        Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
-        headers: {'Authorization': 'Bearer $authToken'},
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -53,10 +56,10 @@ class _PlacaPageState extends State<PlacaPage> {
     _carregarDados();
   }
 
+  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -176,15 +179,28 @@ class _PlacaPageState extends State<PlacaPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CpfPage()),
-                                );
+                              onPressed: () async {
+                                isConveniado
+                                    ? showModalClienteOk(context)
+                                    : showModalClienteNo(context);
 
-                                // AQUI O MODAL
-                                // showModalTransacaoCancelada(context);
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+
+                                if (mounted) {
+                                  Navigator.push(
+                                    context,
+                                    isConveniado
+                                        ? MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CpfInsertPage(),
+                                          )
+                                        : MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CpfPage(),
+                                          ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -221,9 +237,15 @@ class _PlacaPageState extends State<PlacaPage> {
                   ],
                 ),
               ),
-              RealTimeClockItem(
-                proportion: proportion,
-                actualDateTime: actualDateTime,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RealTimeClockItem(
+                    proportion: proportion,
+                    actualDateTime: actualDateTime,
+                  ),
+                  CancelButtonItem(proportion: proportion),
+                ],
               ),
             ],
           ),
