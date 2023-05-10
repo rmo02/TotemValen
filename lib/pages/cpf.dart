@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/model/store_convenio.dart';
+import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/resumo_com_convenio.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';

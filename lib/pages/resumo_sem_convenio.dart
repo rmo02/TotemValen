@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/scan_cupom.dart';
 import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/model/tarifa.dart';
 
 import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/pages/pagamento_select.dart';
@@ -30,25 +31,33 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
   String enterHour = "";
   String permanecia = "";
   String placa = "";
+  String ticket = "";
   double proportion = 1.437500004211426;
-  String tarifa = "";
+  List<Tarifa> tarifas = [];
   String desconto = "0";
 
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
       Uri.parse(
-          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult
+              .result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
         placa = map['dados']['ticket']['placa'];
+        ticket = map['dados']['ticket']['ticketNumero'];
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
-        tarifa = map['dados']['tarifas'][0]['valor'];
+
+        if (map['dados']['tarifas'].length > 0) {
+          for (Tarifa tarifa in map['dados']['tarifas']) {
+            tarifas.add(tarifa);
+          }
+        }
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -69,9 +78,9 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-            image: AssetImage("assests/fundo.png"),
-            fit: BoxFit.cover,
-          )),
+                image: AssetImage("assests/fundo.png"),
+                fit: BoxFit.cover,
+              )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -150,22 +159,23 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Estacionamento",
                                     style: TextStyle(
                                       fontSize:
-                                          (40 / proportion).roundToDouble(),
+                                      (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
                                     ),
                                   ),
                                   Text(
-                                    "RS $tarifa",
+                                    "RS Valor",
+                                    // "RS ${tarifas[0].valor}",
                                     style: TextStyle(
                                       fontSize:
-                                          (40 / proportion).roundToDouble(),
+                                      (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
                                     ),
@@ -197,7 +207,8 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                             ),
                           ),
                           Text(
-                            "RS $tarifa",
+                            "RS Descrição",
+                            // "RS ${tarifas[0].valor}",
                             style: TextStyle(
                               fontSize: (48 / proportion).roundToDouble(),
                               fontWeight: FontWeight.w700,
@@ -248,7 +259,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                       "Adicionar Cupom",
                                       style: TextStyle(
                                         fontSize:
-                                            (48 / proportion).roundToDouble(),
+                                        (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),
@@ -302,7 +313,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                       "Pagamento",
                                       style: TextStyle(
                                         fontSize:
-                                            (48 / proportion).roundToDouble(),
+                                        (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),

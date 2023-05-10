@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/store_convenio.dart';
+import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 
 import '../model/authToken.dart';
@@ -27,6 +29,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
   bool convenio = false;
+  String? convenio_id;
 
   final TextEditingController inputCPFController = TextEditingController();
 
@@ -45,6 +48,10 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
         convenio = map['dados']['convenio'];
+
+        if (convenio) {
+          convenio_id = map['dados']['convenio_dados']['convenio_id'];
+        }
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -216,6 +223,11 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
+                                String text = inputCPFController.text;
+                                StoreCpf.setCpf(text);
+                                isConveniado
+                                    ? StoreConvenio.setConvenio(convenio_id)
+                                    : StoreConvenio.setConvenio("");
                                 Navigator.push(
                                   context,
                                   isConveniado
