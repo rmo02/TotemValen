@@ -121,10 +121,21 @@ class _CpfPageState extends State<CpfPage> {
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ResumoSemConvenioPage()));
+                                  context,
+                                  isConveniado
+                                      ? MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ResumoComConvenioPage(),
+                                        )
+                                      : MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ResumoSemConvenioPage(),
+                                        ),
+                                  // MaterialPageRoute(
+                                  //   builder: (context) =>
+                                  //       ResumoSemConvenioPage(),
+                                  // ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
