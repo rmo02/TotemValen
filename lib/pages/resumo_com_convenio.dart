@@ -33,7 +33,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
   String convenio_id = "";
   String cpf = "";
 
-  String test_bearer = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxOSIsImp0aSI6ImJhNjg0ZGMxZGY3YTU1Y2NlN2IzMGJiMThhMWZiMjAzZjdkOGM5YTk5YmQ2YjFhM2QyMmIyYmU4ODdkYzA1ZThkZjQzZWI3MzYzMDBiOTdkIiwiaWF0IjoxNjgzNzI0NDYwLjUwNzI1OCwibmJmIjoxNjgzNzI0NDYwLjUwNzI2MSwiZXhwIjoxNjgzNzI5ODYwLjUwMjY0Mywic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.Z7evy0Y3Mzhjgt5XrGG1SQ0G4UbGdXmFJ-fdqYwSuP3JyYrPh-gMvHPo66d5dMR9Hh8JS1Wm2_ULvglFVAu79ck50ZpXrJokXYOGxySdcs5-WkmuPzrlzoH2m-tfkTshFs-Vb10vaUX-RxT8a11IlcGKyMSpRLZ29DdZIcoNOGHjuruWauodXHtATva_OXsRjy3E6wYRuiCFs5psEvN6orAOgSoNB00L9M8mGnoBIZlOD3d_LNqh5XOhoiQBBlVAzPVZo_95zy4iNpAesnT9e_ewLUkBCkz33-WXs70STljSESFj_-C9S3n4fzeXcQkzlsoWYKCTJapg3in9PpmYLcBAzpb6gansQaMi_bcsyR1KYLe6vPYDgKGQ9b6UYprkF84c7F3kUiEx_26FDC_P7zLERnBTEnlIqw_M2snyFc1cmORrtt6QJBpOAW0IopXhv_XnNCrOI4M2Ub0hTmLsPbYnJGKmEAXcMC6h4kx8Tr6swoVk7FrUL-Xgu9_n1-00NGPjk9solHp7zUJgKPYeWhOG1sm-pQ4a9IbrYtnxA6ats65UtJ_4cnUPZUkfSM58hmGBkNtTAm29iJdzBICMuY1m8jMQ2XRji5GlAXTzcZ1HTW_6FOTCsrDa2LQ8LulMhRfxIhCAwpUZyuZ2_yW9_itrIA9HMiTQSpBqdsHrpYA";
+  String test_bearer = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyMyIsImp0aSI6ImU5YTlmNmRhZDNkNWQ4ODBlYWYxOWE4ZTY3YzcxNjExZjAwMDUwNjYzOGNmNDg5ODQ1OWE2Yjk0ODZhZWUxYzhhYTNkYTkxY2M3NDE4MDY3IiwiaWF0IjoxNjgzODI2NzQ0LjU3MzQ2MiwibmJmIjoxNjgzODI2NzQ0LjU3MzQ2NywiZXhwIjoxNjgzODMyMTQ0LjU1ODU0Miwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.hVR6MnuM1Hk8ih0tq3OKYpDx9ijW4S_Z3J92XJhayZInCz9qM8kaUjWJMMx0sdimIawS0N5YNQdJR56dxah9D-_wmi9xKqRWzNCz_iJK74B9THwBRRF_u4hLhtY_5CzFzATHDV5crLX-eGfRGWbleuXPm8Azdo3C5yN7sN2cv8HSDZEJGAz3nGQ1jXp_6xe88twb46nrx4Gfp3tyPKmlGSUvNjVIY2BzAtgAEwK1KSGNzUOHdyE1id26B5B1WCQuT7N35UgwJuDq2sLYuTh5GsOgaaGPWbCOyAoSVSCOyqh2epA8giwGV6H2HEc9688jvooUOxxHmtWfmh6Mz2ICExeBWmXL6GktWgciadpnJz3t1J6qrmY0SnyZKVMQKVUZjQ1iS2f0FzShtnMfsidjspVp6bDmiyijv0fjUbDzeX828G0pMENjIePFJucohDvB4LiGYuYtsH__wj5NwqxRRofnKuf6148csPK9jF4SgYgcsbQJYkR6hvwOUdQctX4Hs93IXO6ar4ymgdWWWijlVIso9AD1gHAXN_XKnPH9-LskEpGCYnEbI9z7CUqd_oovkS2RDHHTiEyg6P25dR_l2nU9z2DverS-AazB09-JTkqZRuFmc1DbmRoHQzdaITuPkE3XRRDGxIAQytNqSyrO48T1a3eTnATkH99mAUUdZoE";
   String test_ticket = "037691180539";
 
   _carregarDados() async {
@@ -55,7 +55,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
-        convenio_id = map['dados']['ticket']['convenio_id'];
+        convenio_id = map['dados']['convenio_dados']['convenio_id'];
         cpf = StoreCpf.cpf!;
 
         if (map['dados']['tarifas'].length > 0) {
@@ -290,7 +290,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: liberarSaida(),
+                                onPressed: liberarSaida,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,
@@ -352,7 +352,11 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
     request.fields['motorista_cpf'] = cpf;
 
     request.headers.addAll({'Authorization': 'Bearer $test_bearer'});
-    final resposta = await request.send();
+    var resposta = await request.send();
+    final respStr = await resposta.stream.bytesToString();
+
+    Map<String, dynamic> map = jsonDecode(respStr);
+    var dados = map["dados"][0];
 
     if(resposta.statusCode == 200) {
       if(mounted) {
@@ -365,8 +369,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
         );
       }
     } else {
-     print("Erro");
+      print(dados);
     }
   }
-
 }
