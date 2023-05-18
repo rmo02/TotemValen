@@ -32,8 +32,9 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
   List<Tarifa> tarifas = [];
   String convenio_id = "";
   String cpf = "";
+  String convenio_descricao = "";
 
-  String test_bearer = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyMyIsImp0aSI6ImU5YTlmNmRhZDNkNWQ4ODBlYWYxOWE4ZTY3YzcxNjExZjAwMDUwNjYzOGNmNDg5ODQ1OWE2Yjk0ODZhZWUxYzhhYTNkYTkxY2M3NDE4MDY3IiwiaWF0IjoxNjgzODI2NzQ0LjU3MzQ2MiwibmJmIjoxNjgzODI2NzQ0LjU3MzQ2NywiZXhwIjoxNjgzODMyMTQ0LjU1ODU0Miwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.hVR6MnuM1Hk8ih0tq3OKYpDx9ijW4S_Z3J92XJhayZInCz9qM8kaUjWJMMx0sdimIawS0N5YNQdJR56dxah9D-_wmi9xKqRWzNCz_iJK74B9THwBRRF_u4hLhtY_5CzFzATHDV5crLX-eGfRGWbleuXPm8Azdo3C5yN7sN2cv8HSDZEJGAz3nGQ1jXp_6xe88twb46nrx4Gfp3tyPKmlGSUvNjVIY2BzAtgAEwK1KSGNzUOHdyE1id26B5B1WCQuT7N35UgwJuDq2sLYuTh5GsOgaaGPWbCOyAoSVSCOyqh2epA8giwGV6H2HEc9688jvooUOxxHmtWfmh6Mz2ICExeBWmXL6GktWgciadpnJz3t1J6qrmY0SnyZKVMQKVUZjQ1iS2f0FzShtnMfsidjspVp6bDmiyijv0fjUbDzeX828G0pMENjIePFJucohDvB4LiGYuYtsH__wj5NwqxRRofnKuf6148csPK9jF4SgYgcsbQJYkR6hvwOUdQctX4Hs93IXO6ar4ymgdWWWijlVIso9AD1gHAXN_XKnPH9-LskEpGCYnEbI9z7CUqd_oovkS2RDHHTiEyg6P25dR_l2nU9z2DverS-AazB09-JTkqZRuFmc1DbmRoHQzdaITuPkE3XRRDGxIAQytNqSyrO48T1a3eTnATkH99mAUUdZoE";
+  String test_bearer = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyMyIsImp0aSI6Ijk4ZThjM2Y4NGVlNDk1NTk4ZjM3ODZlZDllN2I3NjA5MzRkZGNhNzkwZTFmYjI1ODcyNDNiNWRjYWRmNTA3MzQyNzI5NGFmNzA3MmEwMDc3IiwiaWF0IjoxNjg0MzQ2NzY2LjAxODAxNiwibmJmIjoxNjg0MzQ2NzY2LjAxODAyLCJleHAiOjE2ODQzNTIxNjUuOTk2OTg0LCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.SqvQNr484Z6TaLX9WY3UG09ZRrOK2wCe_r9Wpulee_7ftpwAhHLviKQ82asMIqbO2x4_aboXSFrTW_H_v5o8z90JptHC-LizAbkCCBBa11cwhGGWbI2zSA_ruScvBGlqL7jb_Y2A00aet2vgQW0bHhsiENmbylF1j4JGjotwrFqBaVisAc0uQfqFjJjP4PoH2wWEaHI3NgsCYW6r0OcVa7LfNUGnFo0V4_KsqcnuCE0Il0bW7n4Y0KDF1wwKelHqt7hNwIDqWT_YvZtVZbJmg_gmUgRScS8RQDTOCVsCWJGxHMmd6rNKV8UU80greWTS3X-QFZP9lZzOFGmTTNFM75Tr1SUCzmh0KcMVScib_XigNtmOLVCKW-PwvjmEUJE2yMFrn2m_B9KqYWTH5-Ruhbvnq3VKNfat-VzOE2skGSPyxQHN2OjfcjlZs3_ZeQN-perL7sS_rT8Dju7AZ6wZ9bicAdx68Uonx21qDk3AY2NnNRxAZeBAo1B6tQoi-6CvEETbdSyqfcv8rRNGbMtIEE-HjnsvAbWpMDw4IFmkIEYYu1whWjkjrv8-DoTpj5b0q9ncWYvn8AzEWYP9v33NKJH4s2jvUCRYj_gsib5ZZN3te6QozPFjqY01tXsZxNEWieCZRWEJLw1M07PFoZjKaC7Wo4dnCNEGexqySCYU1T8";
   String test_ticket = "037691180539";
 
   _carregarDados() async {
@@ -43,11 +44,11 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
           'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/$test_ticket'),
       headers: {
         'Authorization':
-            'Bearer $test_bearer'
+            'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyNSIsImp0aSI6IjBhZmQ3MzBiMThhM2I5MDVmMjc0MWViNDVkNDZkODVjN2U2OGI1YjljYzAxOWE2YmI0NDJjNTVkOTk5ZGRlYzgxOTk2ZjFkYjczN2YwNTE1IiwiaWF0IjoxNjg0MzQ4MTM0LjEyMzIzMSwibmJmIjoxNjg0MzQ4MTM0LjEyMzIzNiwiZXhwIjoxNjg0MzUzNTM0LjExODE0Niwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.uP1tH7ulJ-lBJ-VUfkGMOUGjk_wdWPkpvmwC9cePSZgT8sWMX1cmXVxgN_surkvtNqRO1wduVFJRPu3JWFXyodpUZvBBGUCpW3lN8HgqaBIt0SbVG_cvH68G6czGMhJ-AwstFgeLBfQjERfhDo_hJwU4gMwGryUb7wpjT_yTu35Gi__gQiXFdh2hB3FHxqFeQHolBdLugcWDhhyglIHVlq2N7Vdj6xbCB9mcRoXwmNaKfvnyVBxppw7a2EAPC-6pFHBO8i5wBrvG-CdLE89RskZZwmqP7NhIAPCZNAk6wexUA7YSB37WohXbUHrTXtPuxiiNEN4-MQt29J3hVY-F47etVCKU0cNfRbjFSPdX-GopTBKj6ON0xGkXRQzs5yGAlGpoh6-zWzmka-P3vURcUYRutq7P_KivRxsqsnJnFVbj5X3wGyER5UiYKUlcCP40KDrvhFow0umukbicbIOdxtMJ7oIsLb1SgDmMKo5PyZt3IhLmEZSpuhMAlkYfUWJSPKSUjfcM0K4aJUTJBxzNgYXaYtUeBWyfc3ZgZVoqMlXCxtU1C5Pe_H0-ECOzIzwVZWR6UBg4srCirOBcoanHXYZZaXmMNSL8t2WlH9RoTEyINvmWlQOpmaD5_pfPbgaVi0SYGJDWwpkzc89ElGWGgVLaDzX2XhMuIW92SmVgIW0'
       },
     );
-    if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
+    if (response.statusCode == 200) {
       print(response.body);
       setState(() {
         placa = map['dados']['ticket']['placa'];
@@ -56,13 +57,8 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
         convenio_id = map['dados']['convenio_dados']['convenio_id'];
+        convenio_descricao = map['dados']['convenio_dados']['convenio_descricao'];
         cpf = StoreCpf.cpf!;
-
-        if (map['dados']['tarifas'].length > 0) {
-          for (Tarifa tarifa in map['dados']['tarifas']) {
-            tarifas.add(tarifa);
-          }
-        }
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -167,7 +163,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Descrição Exemplo",
+                                    convenio_descricao,
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),

@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? scanResult;
   String tdata = "";
-  bool pago = true;
+  bool pago = false;
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -30,6 +30,12 @@ class _HomePageState extends State<HomePage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
+
+      if(map['codigo'] == 212) {
+        pago = true;
+      } else {
+        pago = false;
+      }
       // setState(() {
       //   pago = map['dados']['ticket_pago'];
       // });
@@ -44,18 +50,27 @@ class _HomePageState extends State<HomePage> {
       "senha": "Valen@123",
       "scope": "toten_pdv, toten_pdv_patio_1"
     };
+
     String body = json.encode(data);
-    final response = await http.post(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/auth-token'),
-      headers: {'Content-Type': 'application/json'},
-      body: body,
-    );
-    if (response.statusCode == 200) {
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/auth-token'),
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
       Map<String, dynamic> map = jsonDecode(response.body);
-      print('Requisição enviada com sucesso!');
-      AuthToken().token = map['token'];
-    } else {
-      print('Falha ao enviar requisição. Status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        print('Requisição enviada com sucesso!');
+        AuthToken().token = map['token'];
+
+      } else {
+        print('Falha ao enviar requisição. Status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (err) {
+      print('Exception: $err');
     }
   }
 
@@ -178,23 +193,27 @@ class _HomePageState extends State<HomePage> {
         _carregarDados();
 
         if (isPago) {
-          showModalTicketPago(context);
+          if (mounted) {
+            showModalTicketPago(context);
 
-          await Future.delayed(const Duration(seconds: 4));
-
+            await Future.delayed(const Duration(seconds: 4));
+          }
           if (mounted) {
             Navigator.pop(context);
           }
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PlacaPage()),
-          );
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PlacaPage()),
+            );
+          }
         }
       }
     } on PlatformException {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Não foi possível ler o código de barras')),
+        const SnackBar(
+            content: Text('Não foi possível ler o código de barras')),
       );
     }
   }
