@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/model/store_convenio.dart';
 import 'package:totenvalen/model/store_cpf.dart';
@@ -31,8 +32,10 @@ class _CpfPageState extends State<CpfPage> {
   late bool convenio = false;
   late bool ticket_pago = false;
 
-  String test_bearer = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyNSIsImp0aSI6ImM0MmFjNzViMjYzZTk5MDMyYThiZmUwYjgyMDVkYTIwMmU2N2IyOGFjNGIzNGI3YWZmMmI1ZDkyZTRlOWY3ODAwOGJlYjViZTZlNmU4ZTllIiwiaWF0IjoxNjg0NDU2NzE2LjQ5NDk3OCwibmJmIjoxNjg0NDU2NzE2LjQ5NDk4MiwiZXhwIjoxNjg0NDYyMTE2LjQ3NzM5Nywic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.ssYohhteeCfoJwHRgZSvOHbxMO-mqIr5BKboSGuAYhMZaqJ-8v-RViRPHF5Q3lQ6AHGBpxCdjckEBa00I_BapR1JtM67UKO5R_C_2lVZDQk74Rmj0NeCIdiN8wALdlOc7Jsaw7PJotv-RKYqAv_URU4watvfEIEk6d9lP9Pm6-VHPO36waN6qd-QoQuwUC52-C1cTFqmsczMQf9NiYi8k6JjOnEvpASUo7fsi1YxSLcsCSWqSzJ6TaVsatUJbz1aQyBP0qpgRyZ2C7L6BagW5EshTp3BnKr8YCFo4zLjzma0SjVrG-B5HfXosbb0gT0Z6tX3-6QA2TgPRaap6AD00n4vDVozV-GjiBGtYrQDzrzAkuQeN5B0h5w0XTM61JP0Zjm63AE_EqMb3_XEwhmW5qndmp7DtVe2RpiNF04e7MrXN-Bo4EanYXkiI54uzTIZn8nsIf_eRQu1SddggsXSTJ0BbrT42UsKS28OnJ_FwSJVt7CYzsFPYf0fuKQtVou27U9Km2Fnz5I4lk13AjO9YXnw-ebnBw-Kjwd7KOanXuv9dLrk2gy2L69JgKzd0DSZ_Ig5aqVOwUgshPFZtrw7zSLuYEJcnc68lJnhcAk6LSroUWhldnoSl_kb4NZmlE6INcDHO19jK2FpKf21cxu9izOn7pg485q8EMSnJKCXQ9k";
-  String test_ticket = "037691180539";
+  String test_bearer =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyNSIsImp0aSI6Ijc4NWJhZDVlNWExODkxOWQwNDIwZGI1YmRiYThkMGIwMmQ4NDNhNmFmZTE4ZWMyNjFlZDhiZTFkMTJmYWQ0ODE2OGZlZWExNDcwNDMwZGRjIiwiaWF0IjoxNjg0NTk5OTc3Ljk4MjUyOSwibmJmIjoxNjg0NTk5OTc3Ljk4MjUzMSwiZXhwIjoxNjg0NjA1Mzc3Ljk3NjQ2MSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.SUgYSJegTpR2ss_HzhUS-VSn3RTnu1CFaKoaOErmNy_kyX-71cbr8UcdNWdxG2wBJDcJ-VHBuAThjRZM57KJIF3CqZLZXzUKw644Wp11r1lGVua1UYyoeAsuoe6Yl6udiOZCI-A-a_0H1LXYKNKdDQ-eeLa4OCrmu9FNmd-m__kwsHuDA5M1YcPBWWzyaNMZMtZ8jRDyZvgwPf2yBIkqPW-jNCOuspKLXxUgIxJv__csRCBnJ1QcszD3bYVOTEAQb6YxMo9hOA43Zp6txoa4BaUb8H132vOSqlYHwYss_Uf25n26QyQviXC5l2n_kFVccHJAF5avshyJ3MIqUPAyUwarvDHCYKEYVrfC2_o6q0kEteBsV69TBmOrhI36TC8xV7cVcRnwww7ZQiWGn4zpHc8LPnR87czVReE26unEdb_yA0VrSQF8RwjvTkDAumTa9fs3DYrQcly9QtvmEYkpRza0sbtgLb-a21HJuSJ_6m-VnEaFUEz1bhHBC7aUVx34QQELpd1r9YlNXi-fpP3BZx7IvR2fAXNI075bYsa9nkKSI3jUThhBrRYg_Q8BL6KyfmXCxR7TywNNUlJNCwdwuFeC48RBap0eVVAP_e9Ar0cKSfQeL_a7jKQ6DOul0dkzSiMUVUrRMFM7O6bZaK7IGGaSN1FhxlIfhC1elAaJJaI";
+  String test_ticket = "037695606126";
+
   // ${ScanResult.result}
 
   //get dados
@@ -46,14 +49,6 @@ class _CpfPageState extends State<CpfPage> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      setState(() {
-        placa = map['dados']['ticket']['placa'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-        convenio = map['dados']['convenio'];
-        ticket_pago = map['dados']['ticket_pago'];
-      });
     } else {
       throw Exception('Erro ao carregar dados');
     }
@@ -64,9 +59,6 @@ class _CpfPageState extends State<CpfPage> {
     super.initState();
     _carregarDados();
   }
-
-  bool get isConveniado => convenio;
-  bool get isTicketPago => ticket_pago;
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +76,10 @@ class _CpfPageState extends State<CpfPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
               Container(
                 height: (500 / proportion).roundToDouble(),
@@ -131,7 +123,8 @@ class _CpfPageState extends State<CpfPage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  (isConveniado & isTicketPago)
+                                  (ConsultaResponse.convenio &
+                                          ConsultaResponse.ticket_pago)
                                       ? MaterialPageRoute(
                                           builder: (context) =>
                                               const ResumoComConvenioPage(),
@@ -140,10 +133,6 @@ class _CpfPageState extends State<CpfPage> {
                                           builder: (context) =>
                                               const ResumoSemConvenioPage(),
                                         ),
-                                  // MaterialPageRoute(
-                                  //   builder: (context) =>
-                                  //       ResumoSemConvenioPage(),
-                                  // ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -194,7 +183,8 @@ class _CpfPageState extends State<CpfPage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  (isConveniado & isTicketPago)
+                                  (ConsultaResponse.convenio &
+                                          ConsultaResponse.ticket_pago)
                                       ? MaterialPageRoute(
                                           builder: (context) =>
                                               const ResumoComConvenioPage(),
