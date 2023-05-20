@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/store_convenio.dart';
+import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
 
 import '../model/authToken.dart';
@@ -27,8 +29,14 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
   bool convenio = false;
+  String? convenio_id;
+  bool ticket_pago = false;
 
   final TextEditingController inputCPFController = TextEditingController();
+
+  String test_bearer =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyMyIsImp0aSI6Ijk4ZThjM2Y4NGVlNDk1NTk4ZjM3ODZlZDllN2I3NjA5MzRkZGNhNzkwZTFmYjI1ODcyNDNiNWRjYWRmNTA3MzQyNzI5NGFmNzA3MmEwMDc3IiwiaWF0IjoxNjg0MzQ2NzY2LjAxODAxNiwibmJmIjoxNjg0MzQ2NzY2LjAxODAyLCJleHAiOjE2ODQzNTIxNjUuOTk2OTg0LCJzdWIiOiIzIiwic2NvcGVzIjpbInRvdGVuX3BkdiIsInRvdGVuX3Bkdl9wYXRpb18xIl19.SqvQNr484Z6TaLX9WY3UG09ZRrOK2wCe_r9Wpulee_7ftpwAhHLviKQ82asMIqbO2x4_aboXSFrTW_H_v5o8z90JptHC-LizAbkCCBBa11cwhGGWbI2zSA_ruScvBGlqL7jb_Y2A00aet2vgQW0bHhsiENmbylF1j4JGjotwrFqBaVisAc0uQfqFjJjP4PoH2wWEaHI3NgsCYW6r0OcVa7LfNUGnFo0V4_KsqcnuCE0Il0bW7n4Y0KDF1wwKelHqt7hNwIDqWT_YvZtVZbJmg_gmUgRScS8RQDTOCVsCWJGxHMmd6rNKV8UU80greWTS3X-QFZP9lZzOFGmTTNFM75Tr1SUCzmh0KcMVScib_XigNtmOLVCKW-PwvjmEUJE2yMFrn2m_B9KqYWTH5-Ruhbvnq3VKNfat-VzOE2skGSPyxQHN2OjfcjlZs3_ZeQN-perL7sS_rT8Dju7AZ6wZ9bicAdx68Uonx21qDk3AY2NnNRxAZeBAo1B6tQoi-6CvEETbdSyqfcv8rRNGbMtIEE-HjnsvAbWpMDw4IFmkIEYYu1whWjkjrv8-DoTpj5b0q9ncWYvn8AzEWYP9v33NKJH4s2jvUCRYj_gsib5ZZN3te6QozPFjqY01tXsZxNEWieCZRWEJLw1M07PFoZjKaC7Wo4dnCNEGexqySCYU1T8";
+  String test_ticket = "037691180539";
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -39,12 +47,18 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
+      print(response.body);
       setState(() {
         placa = map['dados']['ticket']['placa'];
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
         convenio = map['dados']['convenio'];
+        ticket_pago = map['dados']['ticket_pago'];
+
+        if (convenio) {
+          convenio_id = map['dados']['convenio_dados']['convenio_id'];
+        }
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -58,6 +72,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
   }
 
   bool get isConveniado => convenio;
+  bool get isTicketPago => ticket_pago;
 
   @override
   Widget build(BuildContext context) {
@@ -216,9 +231,14 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
+                                String text = inputCPFController.text;
+                                StoreCpf.setCpf(text);
+                                (isConveniado & isTicketPago)
+                                    ? StoreConvenio.setConvenio(convenio_id)
+                                    : StoreConvenio.setConvenio("");
                                 Navigator.push(
                                   context,
-                                  isConveniado
+                                  (isConveniado & isTicketPago)
                                       ? MaterialPageRoute(
                                           builder: (context) => const CpfPage(),
                                         )

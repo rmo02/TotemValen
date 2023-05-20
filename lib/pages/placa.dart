@@ -30,6 +30,7 @@ class _PlacaPageState extends State<PlacaPage> {
   String placa = "";
   double proportion = 1.437500004211426;
   bool convenio = false;
+  bool ticket_pago = false;
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -38,14 +39,15 @@ class _PlacaPageState extends State<PlacaPage> {
           'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
-    if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
+    if (response.statusCode == 200) {
       setState(() {
         placa = map['dados']['ticket']['placa'];
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
         convenio = map['dados']['convenio'];
+        ticket_pago = map['dados']['ticket_pago'];
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -59,6 +61,7 @@ class _PlacaPageState extends State<PlacaPage> {
   }
 
   bool get isConveniado => convenio;
+  bool get isTicketPago => ticket_pago;
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +185,7 @@ class _PlacaPageState extends State<PlacaPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () async {
-                                isConveniado
+                                (isConveniado & isTicketPago)
                                     ? showModalClienteOk(context)
                                     : showModalClienteNo(context);
 
@@ -192,7 +195,7 @@ class _PlacaPageState extends State<PlacaPage> {
                                 if (mounted) {
                                   Navigator.push(
                                     context,
-                                    isConveniado
+                                    (isConveniado & isTicketPago)
                                         ? MaterialPageRoute(
                                             builder: (context) =>
                                                 const CpfInsertPage(),

@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/faturado_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/model/store_cpf.dart';
+import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
+import '../model/tarifa.dart';
 import '../util/modal_cupom_function.dart';
 import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -24,9 +28,13 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
   String enterHour = "";
   String permanecia = "";
   String placa = "";
+  String ticket = "";
   double proportion = 1.437500004211426;
-  String tarifa = "";
   String desconto = "0";
+  List<Tarifa> tarifas = [];
+  String convenio_id = "";
+  String cpf = "";
+  String convenio_descricao = "";
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -35,14 +43,18 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
           'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
+    Map<String, dynamic> map = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
         placa = map['dados']['ticket']['placa'];
+        ticket = map['dados']['ticket']['ticketNumero'];
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
-        tarifa = map['dados']['tarifas'][0]['valor'];
+        convenio_id = map['dados']['convenio_dados']['convenio_id'];
+        convenio_descricao =
+            map['dados']['convenio_dados']['convenio_descricao'];
+        cpf = StoreCpf.cpf!;
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -147,7 +159,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Estacionamento",
+                                    convenio_descricao,
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -156,7 +168,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     ),
                                   ),
                                   Text(
-                                    "RS $tarifa",
+                                    "RS Valor Exemplo",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -191,7 +203,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                             ),
                           ),
                           Text(
-                            "RS $tarifa",
+                            "RS Valor exemplo",
                             style: TextStyle(
                               fontSize: (48 / proportion).roundToDouble(),
                               fontWeight: FontWeight.w700,
@@ -222,6 +234,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
+                                  // MUDAR ISSO AQUI PRA MODAL CANCELAR E TESTAR
                                   showModalCupom(context);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -269,15 +282,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const PagamentoOKPage(),
-                                    ),
-                                  );
-                                },
+                                onPressed: liberarSaida,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,
@@ -328,5 +333,59 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
         ),
       ),
     );
+  }
+
+  Future<void> liberarSaida() async {
+    final authToken = AuthToken().token;
+    final url = Uri.parse(
+        'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/baixa/convenio');
+    final request = http.MultipartRequest('POST', url);
+    request.fields['ticket'] = ticket;
+    request.fields['convenio_id'] = convenio_id;
+    request.fields['motorista_cpf'] = StoreCpf.cpf!;
+
+    request.headers.addAll({'Authorization': 'Bearer $authToken'});
+    var resposta = await request.send();
+    final respStr = await resposta.stream.bytesToString();
+
+    Map<String, dynamic> map = jsonDecode(respStr);
+    var dados = map["dados"][0];
+
+
+    if (resposta.statusCode == 200) {
+      FaturadoResponse.setPatio(map["dados"][0]["dados"]["patio"]);
+      FaturadoResponse.setAtendente(map["dados"][0]["dados"]["atendente"]);
+      FaturadoResponse.setPlaca(map["dados"][0]["dados"]["placa"]);
+      FaturadoResponse.setEntrada(map["dados"][0]["dados"]["data_entrada"]);
+      FaturadoResponse.setPagamento(map["dados"][0]["dados"]["data_pagamento"]);
+      FaturadoResponse.setPermanencia(map["dados"][0]["dados"]["permancia"]);
+      FaturadoResponse.setSaidaPermitida(map["dados"][0]["dados"]["data_saida"]);
+      FaturadoResponse.setDescricao(map["dados"][0]["dados"]["detalhes"]["convenio"]);
+      FaturadoResponse.setMotorista(map["dados"][0]["dados"]["detalhes"]["motorista"]);
+      FaturadoResponse.setDinheiro(map["dados"][0]["dados"]["valor_original"]);
+      FaturadoResponse.setValorReceber(map["dados"][0]["dados"]["valor_original"]);
+      FaturadoResponse.setTotalPago(map["dados"][0]["dados"]["totalPago"]);
+      FaturadoResponse.setTroco(map["dados"][0]["dados"]["troco"]);
+
+      // var globalData = GlobalData.fromJson(dados);
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PagamentoOKPage(),
+          ),
+        );
+      }
+    } else {
+      if(mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+      }
+    }
   }
 }

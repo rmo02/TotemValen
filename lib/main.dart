@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:totenvalen/pages/cpf.dart';
+import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/home.dart';
-import 'package:totenvalen/pages/placa.dart';
-import 'package:totenvalen/pages/placa_insert.dart';
+import 'package:totenvalen/pages/pagamento_ok.dart';
+import 'package:totenvalen/pages/resumo_com_convenio.dart';
 
 void main() {
 
