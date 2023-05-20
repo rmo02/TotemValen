@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/faturado_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/model/store_cpf.dart';
@@ -32,11 +33,14 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
   double proportion = 1.437500004211426;
   String desconto = "0";
   List<Tarifa> tarifas = [];
-  String convenio_id = "";
   String cpf = "";
   String convenio_descricao = "";
 
-  _carregarDados() async {
+  String test_bearer =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyNSIsImp0aSI6Ijc4NWJhZDVlNWExODkxOWQwNDIwZGI1YmRiYThkMGIwMmQ4NDNhNmFmZTE4ZWMyNjFlZDhiZTFkMTJmYWQ0ODE2OGZlZWExNDcwNDMwZGRjIiwiaWF0IjoxNjg0NTk5OTc3Ljk4MjUyOSwibmJmIjoxNjg0NTk5OTc3Ljk4MjUzMSwiZXhwIjoxNjg0NjA1Mzc3Ljk3NjQ2MSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.SUgYSJegTpR2ss_HzhUS-VSn3RTnu1CFaKoaOErmNy_kyX-71cbr8UcdNWdxG2wBJDcJ-VHBuAThjRZM57KJIF3CqZLZXzUKw644Wp11r1lGVua1UYyoeAsuoe6Yl6udiOZCI-A-a_0H1LXYKNKdDQ-eeLa4OCrmu9FNmd-m__kwsHuDA5M1YcPBWWzyaNMZMtZ8jRDyZvgwPf2yBIkqPW-jNCOuspKLXxUgIxJv__csRCBnJ1QcszD3bYVOTEAQb6YxMo9hOA43Zp6txoa4BaUb8H132vOSqlYHwYss_Uf25n26QyQviXC5l2n_kFVccHJAF5avshyJ3MIqUPAyUwarvDHCYKEYVrfC2_o6q0kEteBsV69TBmOrhI36TC8xV7cVcRnwww7ZQiWGn4zpHc8LPnR87czVReE26unEdb_yA0VrSQF8RwjvTkDAumTa9fs3DYrQcly9QtvmEYkpRza0sbtgLb-a21HJuSJ_6m-VnEaFUEz1bhHBC7aUVx34QQELpd1r9YlNXi-fpP3BZx7IvR2fAXNI075bYsa9nkKSI3jUThhBrRYg_Q8BL6KyfmXCxR7TywNNUlJNCwdwuFeC48RBap0eVVAP_e9Ar0cKSfQeL_a7jKQ6DOul0dkzSiMUVUrRMFM7O6bZaK7IGGaSN1FhxlIfhC1elAaJJaI";
+  String test_ticket = "037695606126";
+
+  Future<void> _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
       Uri.parse(
@@ -46,15 +50,9 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
     Map<String, dynamic> map = jsonDecode(response.body);
     if (response.statusCode == 200) {
       setState(() {
-        placa = map['dados']['ticket']['placa'];
-        ticket = map['dados']['ticket']['ticketNumero'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-        convenio_id = map['dados']['convenio_dados']['convenio_id'];
-        convenio_descricao =
-            map['dados']['convenio_dados']['convenio_descricao'];
-        cpf = StoreCpf.cpf!;
+        ConsultaResponse.setConvenioDescricao(
+            map['dados']['convenio_dados']['convenio_descricao']);
+        StoreCpf.cpf!;
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -84,10 +82,10 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
               Container(
                 height: (660 / proportion).roundToDouble(),
@@ -159,7 +157,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    convenio_descricao,
+                                    ConsultaResponse.convenio_descricao,
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -340,17 +338,16 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
     final url = Uri.parse(
         'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/baixa/convenio');
     final request = http.MultipartRequest('POST', url);
-    request.fields['ticket'] = ticket;
-    request.fields['convenio_id'] = convenio_id;
+    request.fields['ticket'] = ConsultaResponse.ticket;
+    request.fields['convenio_id'] = ConsultaResponse.convenio_id;
     request.fields['motorista_cpf'] = StoreCpf.cpf!;
 
+    // request.headers.addAll({'Authorization': 'Bearer $authToken'});
     request.headers.addAll({'Authorization': 'Bearer $authToken'});
     var resposta = await request.send();
     final respStr = await resposta.stream.bytesToString();
 
     Map<String, dynamic> map = jsonDecode(respStr);
-    var dados = map["dados"][0];
-
 
     if (resposta.statusCode == 200) {
       FaturadoResponse.setPatio(map["dados"][0]["dados"]["patio"]);
@@ -359,15 +356,17 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
       FaturadoResponse.setEntrada(map["dados"][0]["dados"]["data_entrada"]);
       FaturadoResponse.setPagamento(map["dados"][0]["dados"]["data_pagamento"]);
       FaturadoResponse.setPermanencia(map["dados"][0]["dados"]["permancia"]);
-      FaturadoResponse.setSaidaPermitida(map["dados"][0]["dados"]["data_saida"]);
-      FaturadoResponse.setDescricao(map["dados"][0]["dados"]["detalhes"]["convenio"]);
-      FaturadoResponse.setMotorista(map["dados"][0]["dados"]["detalhes"]["motorista"]);
+      FaturadoResponse.setSaidaPermitida(
+          map["dados"][0]["dados"]["data_saida"]);
+      FaturadoResponse.setDescricao(
+          map["dados"][0]["dados"]["detalhes"]["convenio"]);
+      FaturadoResponse.setMotorista(
+          map["dados"][0]["dados"]["detalhes"]["motorista"]);
       FaturadoResponse.setDinheiro(map["dados"][0]["dados"]["valor_original"]);
-      FaturadoResponse.setValorReceber(map["dados"][0]["dados"]["valor_original"]);
+      FaturadoResponse.setValorReceber(
+          map["dados"][0]["dados"]["valor_original"]);
       FaturadoResponse.setTotalPago(map["dados"][0]["dados"]["totalPago"]);
       FaturadoResponse.setTroco(map["dados"][0]["dados"]["troco"]);
-
-      // var globalData = GlobalData.fromJson(dados);
 
       if (mounted) {
         Navigator.push(
@@ -378,7 +377,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
         );
       }
     } else {
-      if(mounted) {
+      if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
