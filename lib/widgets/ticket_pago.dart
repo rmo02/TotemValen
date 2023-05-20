@@ -4,7 +4,10 @@ import 'package:totenvalen/model/scan_result.dart';
 class TicketPagoWidget extends StatefulWidget {
   const TicketPagoWidget({
     Key? key,
+    required this.objetoResponse
   }) : super(key: key);
+
+  final dynamic objetoResponse;
 
   @override
   State<TicketPagoWidget> createState() => _TicketPagoWidgetState();
@@ -38,7 +41,7 @@ class _TicketPagoWidgetState extends State<TicketPagoWidget> {
               ),
             ),
             Text(
-              "a próxima cobrança em DD/MM/YYYY às HH:mm:ss",
+              "${widget.objetoResponse["menssagem"]}",
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: (48 / proportion).roundToDouble(),

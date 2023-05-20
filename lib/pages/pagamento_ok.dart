@@ -2,9 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sunmi_printer_plus/column_maker.dart';
+import 'package:sunmi_printer_plus/enums.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
+import 'package:sunmi_printer_plus/sunmi_style.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/faturado_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/home.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -12,7 +17,9 @@ import 'package:quiver/async.dart';
 import 'package:http/http.dart' as http;
 
 class PagamentoOKPage extends StatefulWidget {
-  const PagamentoOKPage({Key? key}) : super(key: key);
+  const PagamentoOKPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PagamentoOKPage> createState() => _PagamentoOKPageState();
@@ -21,26 +28,25 @@ class PagamentoOKPage extends StatefulWidget {
 class _PagamentoOKPageState extends State<PagamentoOKPage> {
   bool printBinded = false;
   int paperSize = 0;
+  String placa = "";
   String serialNumber = "";
   String printerVersion = "";
   String actualDateTime = DateFormat("HH:mm:ss").format(DateTime.now());
   String enterDate = "";
   String enterHour = "";
   String permanecia = "";
-  String placa = "";
   double proportion = 1.437500004211426;
   int _start = 10;
   int _current = 10;
 
-  String test_bearer = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyMyIsImp0aSI6ImU5YTlmNmRhZDNkNWQ4ODBlYWYxOWE4ZTY3YzcxNjExZjAwMDUwNjYzOGNmNDg5ODQ1OWE2Yjk0ODZhZWUxYzhhYTNkYTkxY2M3NDE4MDY3IiwiaWF0IjoxNjgzODI2NzQ0LjU3MzQ2MiwibmJmIjoxNjgzODI2NzQ0LjU3MzQ2NywiZXhwIjoxNjgzODMyMTQ0LjU1ODU0Miwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.hVR6MnuM1Hk8ih0tq3OKYpDx9ijW4S_Z3J92XJhayZInCz9qM8kaUjWJMMx0sdimIawS0N5YNQdJR56dxah9D-_wmi9xKqRWzNCz_iJK74B9THwBRRF_u4hLhtY_5CzFzATHDV5crLX-eGfRGWbleuXPm8Azdo3C5yN7sN2cv8HSDZEJGAz3nGQ1jXp_6xe88twb46nrx4Gfp3tyPKmlGSUvNjVIY2BzAtgAEwK1KSGNzUOHdyE1id26B5B1WCQuT7N35UgwJuDq2sLYuTh5GsOgaaGPWbCOyAoSVSCOyqh2epA8giwGV6H2HEc9688jvooUOxxHmtWfmh6Mz2ICExeBWmXL6GktWgciadpnJz3t1J6qrmY0SnyZKVMQKVUZjQ1iS2f0FzShtnMfsidjspVp6bDmiyijv0fjUbDzeX828G0pMENjIePFJucohDvB4LiGYuYtsH__wj5NwqxRRofnKuf6148csPK9jF4SgYgcsbQJYkR6hvwOUdQctX4Hs93IXO6ar4ymgdWWWijlVIso9AD1gHAXN_XKnPH9-LskEpGCYnEbI9z7CUqd_oovkS2RDHHTiEyg6P25dR_l2nU9z2DverS-AazB09-JTkqZRuFmc1DbmRoHQzdaITuPkE3XRRDGxIAQytNqSyrO48T1a3eTnATkH99mAUUdZoE";
-  String test_ticket = "037691180539";
   // ${ScanResult.result}
 
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
-      Uri.parse('https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${test_ticket}'),
-      headers: {'Authorization': 'Bearer $test_bearer'},
+      Uri.parse(
+          'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
+      headers: {'Authorization': 'Bearer $authToken'},
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -58,15 +64,73 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
   _imprimirRecibo() async {
     await SunmiPrinter.initPrinter();
     await SunmiPrinter.startTransactionPrint(true);
-    await SunmiPrinter.setCustomFontSize(60);
-    await SunmiPrinter.printText('Teste de recibo!');
-    await SunmiPrinter.resetFontSize();
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('VALENLOG ESTACIONAMENTO LTDA');
+    await SunmiPrinter.resetBold();
+
+    await SunmiPrinter.printText('CNPJ: 33.176.727/0001-83');
+    await SunmiPrinter.printText('E-MAIL: VALENLOG.SAOLUIS@REDEVALEN.COM');
+    await SunmiPrinter.printText('FONE: (98) 99100-1319 / 99245-2418');
+    await SunmiPrinter.printText('ENDEREÇO: AVENIDA EMILIANO MACIEIRA, 100,');
+    await SunmiPrinter.printText('SÃO LUÍS/MA, 65091-320');
+
+    await SunmiPrinter.printText('PATIO: ${FaturadoResponse.patio}');
+    await SunmiPrinter.printText('ATENDENTE: ${FaturadoResponse.atendente}');
+    await SunmiPrinter.line();
+    await SunmiPrinter.printText('TICKET: ${ScanResult.result}');
+    await SunmiPrinter.printText('PLACA: ${FaturadoResponse.placa}');
+    await SunmiPrinter.printText('ENTRADA: ${FaturadoResponse.entrada}');
+    await SunmiPrinter.printText('PAGAMENTO: ${FaturadoResponse.pagamento}');
+    await SunmiPrinter.printText('PERMANENCIA: ${FaturadoResponse.permanencia}');
+    await SunmiPrinter.printText('SAIDA PERMITIDA: ${FaturadoResponse.saidaPermitida}');
+    await SunmiPrinter.line();
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('Detalhes');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('${FaturadoResponse.descricao}');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('${FaturadoResponse.motorista}');
+    await SunmiPrinter.line();
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('Pagamentos');
+    await SunmiPrinter.resetBold();
+
+    await SunmiPrinter.printText('DINHEIRO: R\$ ${FaturadoResponse.dinheiro}');
+    await SunmiPrinter.line();
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('Resumo');
+    await SunmiPrinter.resetBold();
+    await SunmiPrinter.printText('Valor a Receber: R\$ ${FaturadoResponse.valorReceber}');
+    await SunmiPrinter.printText('Total Pago: R\$ ${FaturadoResponse.totalPago}');
+    await SunmiPrinter.printText('Troco: R\$ ${FaturadoResponse.troco}');
+    await SunmiPrinter.line();
+
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('SR(A). MOTORISTA QUE VAI');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('DESCARREGAR, A PARTIR DA BAIXA');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('DESSE TICKET VOCÊ TEM 1 HORA PARA');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('CHEGAR NO PORTO DO ITAQUI,');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('PASSANDO DISSO DEVE RETORNAR AO');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('PATIO DE TRIAGEM PARA GERAR NOVA');
+    await SunmiPrinter.bold();
+    await SunmiPrinter.printText('ESTADIA.');
+
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.exitTransactionPrint(true);
-
     await SunmiPrinter.cut();
   }
-
 
   void startTimer() {
     CountdownTimer countDownTimer = new CountdownTimer(
@@ -91,12 +155,11 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
     _carregarDados();
-    startTimer();
+    // startTimer();
     _bindingPrinter().then((bool? isBind) async {
       SunmiPrinter.paperSize().then((int size) {
         setState(() {

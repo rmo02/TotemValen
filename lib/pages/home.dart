@@ -19,7 +19,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? scanResult;
   String tdata = "";
-  bool pago = false;
+  late bool pago = false;
+  String mensagem = "";
+  late Map<String, dynamic> dadosObjeto;
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -28,10 +30,12 @@ class _HomePageState extends State<HomePage> {
           'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
-    if (response.statusCode == 200) {
-      Map<String, dynamic> map = jsonDecode(response.body);
 
-      if(map['codigo'] == 212) {
+    Map<String, dynamic> map = jsonDecode(response.body);
+    dadosObjeto = map;
+
+    if (response.statusCode == 200) {
+      if (map['codigo'] == 212) {
         pago = true;
       } else {
         pago = false;
@@ -64,7 +68,6 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         print('Requisição enviada com sucesso!');
         AuthToken().token = map['token'];
-
       } else {
         print('Falha ao enviar requisição. Status: ${response.statusCode}');
         print('Response body: ${response.body}');
@@ -190,11 +193,11 @@ class _HomePageState extends State<HomePage> {
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 
-        _carregarDados();
+        await _carregarDados();
 
         if (isPago) {
           if (mounted) {
-            showModalTicketPago(context);
+            showModalTicketPago(context, this.dadosObjeto);
 
             await Future.delayed(const Duration(seconds: 4));
           }
