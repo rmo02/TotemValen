@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:totenvalen/pages/home.dart';
-import 'package:totenvalen/pages/placa.dart';
-import 'package:totenvalen/pages/placa_insert.dart';
 
 void main() {
 
