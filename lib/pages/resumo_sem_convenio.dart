@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/scan_cupom.dart';
 import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/model/tarifa.dart';
 
 import 'package:totenvalen/pages/pagamento_ok.dart';
 import 'package:totenvalen/pages/pagamento_select.dart';
@@ -30,8 +31,9 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
   String enterHour = "";
   String permanecia = "";
   String placa = "";
+  String ticket = "";
   double proportion = 1.437500004211426;
-  String tarifa = "";
+  List<Tarifa> tarifas = [];
   String desconto = "0";
 
   _carregarDados() async {
@@ -45,10 +47,16 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
         placa = map['dados']['ticket']['placa'];
+        ticket = map['dados']['ticket']['ticketNumero'];
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
-        tarifa = map['dados']['tarifas'][0]['valor'];
+
+        if (map['dados']['tarifas'].length > 0) {
+          for (Tarifa tarifa in map['dados']['tarifas']) {
+            tarifas.add(tarifa);
+          }
+        }
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -162,7 +170,8 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                     ),
                                   ),
                                   Text(
-                                    "RS $tarifa",
+                                    "RS Valor",
+                                    // "RS ${tarifas[0].valor}",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -197,7 +206,8 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                             ),
                           ),
                           Text(
-                            "RS $tarifa",
+                            "RS Descrição",
+                            // "RS ${tarifas[0].valor}",
                             style: TextStyle(
                               fontSize: (48 / proportion).roundToDouble(),
                               fontWeight: FontWeight.w700,

@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/qrcode/QRCode.dart';
+import 'package:totenvalen/qrcode/QrcodeStruct.dart';
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
 import '../widgets/cancel_button_item.dart';
@@ -22,24 +25,54 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
-
+  // para gerar o qrcode
+  double tarifa = 0.0;
+  String description = "";
+  String tollId = "4b2ec3f976a54740a0185a362210753b";
+  String externalId = "816a6a5a42124f7880c2853";
+  Future<QrcodeStruct>? _futureQrcode; // se precisar clicar em algum button
+  //
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
       Uri.parse(
           'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
-      headers: {'Authorization': 'Bearer $authToken'},
+      headers: {'Authorization': 'Bearer ${authToken}'},
     );
+
     if (response.statusCode == 200) {
+      print("chegou");
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
         placa = map['dados']['ticket']['placa'];
         permanecia = map['dados']['permanencia'][0];
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
+        tarifa = map["dados"]["tarifas"]["valor"]; // precisa ser apenas um objeto ou dado único!
+        description = map["dados"]["tarifas"]["descricao"];
       });
     } else {
       throw Exception('Erro ao carregar dados');
+    }
+  }
+
+  Future<QrcodeStruct> _createQrcode(String externalId, double amount, String description) async {
+    final response = await http.post(
+      Uri.parse('https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "externalId": externalId,
+        "amount": tarifa,
+        "description": description
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return QrcodeStruct.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create qrcode.');
     }
   }
 
@@ -47,6 +80,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   void initState() {
     super.initState();
     _carregarDados();
+    _createQrcode(externalId, tarifa, description);
   }
 
   @override
@@ -99,6 +133,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
                         ),
                       ),
                     ),
+                    buildFutureBuilder(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -169,6 +204,24 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
           ),
         ),
       ),
+    );
+  }
+
+  // Future da request após o Post na API
+  FutureBuilder<QrcodeStruct> buildFutureBuilder() {
+    return FutureBuilder<QrcodeStruct>(
+      future: _futureQrcode,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return QRCode(
+              qrSize: 250.0,
+              qrData: snapshot.data!.qrCodeImageB64
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
     );
   }
 }

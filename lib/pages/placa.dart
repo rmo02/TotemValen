@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:totenvalen/pages/placa_insert.dart';
@@ -30,6 +31,11 @@ class _PlacaPageState extends State<PlacaPage> {
   String placa = "";
   double proportion = 1.437500004211426;
   bool convenio = false;
+  bool ticket_pago = false;
+
+  String test_bearer =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyNSIsImp0aSI6Ijc4NWJhZDVlNWExODkxOWQwNDIwZGI1YmRiYThkMGIwMmQ4NDNhNmFmZTE4ZWMyNjFlZDhiZTFkMTJmYWQ0ODE2OGZlZWExNDcwNDMwZGRjIiwiaWF0IjoxNjg0NTk5OTc3Ljk4MjUyOSwibmJmIjoxNjg0NTk5OTc3Ljk4MjUzMSwiZXhwIjoxNjg0NjA1Mzc3Ljk3NjQ2MSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.SUgYSJegTpR2ss_HzhUS-VSn3RTnu1CFaKoaOErmNy_kyX-71cbr8UcdNWdxG2wBJDcJ-VHBuAThjRZM57KJIF3CqZLZXzUKw644Wp11r1lGVua1UYyoeAsuoe6Yl6udiOZCI-A-a_0H1LXYKNKdDQ-eeLa4OCrmu9FNmd-m__kwsHuDA5M1YcPBWWzyaNMZMtZ8jRDyZvgwPf2yBIkqPW-jNCOuspKLXxUgIxJv__csRCBnJ1QcszD3bYVOTEAQb6YxMo9hOA43Zp6txoa4BaUb8H132vOSqlYHwYss_Uf25n26QyQviXC5l2n_kFVccHJAF5avshyJ3MIqUPAyUwarvDHCYKEYVrfC2_o6q0kEteBsV69TBmOrhI36TC8xV7cVcRnwww7ZQiWGn4zpHc8LPnR87czVReE26unEdb_yA0VrSQF8RwjvTkDAumTa9fs3DYrQcly9QtvmEYkpRza0sbtgLb-a21HJuSJ_6m-VnEaFUEz1bhHBC7aUVx34QQELpd1r9YlNXi-fpP3BZx7IvR2fAXNI075bYsa9nkKSI3jUThhBrRYg_Q8BL6KyfmXCxR7TywNNUlJNCwdwuFeC48RBap0eVVAP_e9Ar0cKSfQeL_a7jKQ6DOul0dkzSiMUVUrRMFM7O6bZaK7IGGaSN1FhxlIfhC1elAaJJaI";
+  String test_ticket = "037695606126";
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -38,14 +44,16 @@ class _PlacaPageState extends State<PlacaPage> {
           'https://qas.sgpi.valenlog.com.br/api/v1/pdv/caixas/ticket/${ScanResult.result}'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
+    Map<String, dynamic> map = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
-        placa = map['dados']['ticket']['placa'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-        convenio = map['dados']['convenio'];
+        ConsultaResponse.setTicket(map['dados']['ticket']['ticketNumero']);
+        ConsultaResponse.setPlaca(map['dados']['ticket']['placa']);
+        ConsultaResponse.setPermanencia(map['dados']['permanencia'][0]);
+        ConsultaResponse.setEnterDate(map['dados']['ticket']['dataEntradaDia']);
+        ConsultaResponse.setEnterHour(map['dados']['ticket']['dataEntradaHora']);
+        ConsultaResponse.setConvenio(map['dados']['convenio']);
+        ConsultaResponse.setTicket_pago(map['dados']['ticket_pago']);
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -57,8 +65,6 @@ class _PlacaPageState extends State<PlacaPage> {
     super.initState();
     _carregarDados();
   }
-
-  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
@@ -76,10 +82,10 @@ class _PlacaPageState extends State<PlacaPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
 
               // Main info
@@ -94,7 +100,7 @@ class _PlacaPageState extends State<PlacaPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      placa,
+                      ConsultaResponse.placa,
                       style: TextStyle(
                         color: const Color(0xFF1A2EA1),
                         fontSize: (72 / proportion).roundToDouble(),
@@ -182,7 +188,7 @@ class _PlacaPageState extends State<PlacaPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () async {
-                                isConveniado
+                                (ConsultaResponse.convenio & ConsultaResponse.ticket_pago)
                                     ? showModalClienteOk(context)
                                     : showModalClienteNo(context);
 
@@ -192,7 +198,7 @@ class _PlacaPageState extends State<PlacaPage> {
                                 if (mounted) {
                                   Navigator.push(
                                     context,
-                                    isConveniado
+                                    (ConsultaResponse.convenio & ConsultaResponse.ticket_pago)
                                         ? MaterialPageRoute(
                                             builder: (context) =>
                                                 const CpfInsertPage(),

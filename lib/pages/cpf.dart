@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
+import 'package:totenvalen/model/store_convenio.dart';
+import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/resumo_com_convenio.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
@@ -26,10 +29,17 @@ class _CpfPageState extends State<CpfPage> {
   String permanecia = "";
   String placa = "";
   double proportion = 1.437500004211426;
-  bool convenio = false;
+  late bool convenio = false;
+  late bool ticket_pago = false;
+
+  String test_bearer =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyNSIsImp0aSI6Ijc4NWJhZDVlNWExODkxOWQwNDIwZGI1YmRiYThkMGIwMmQ4NDNhNmFmZTE4ZWMyNjFlZDhiZTFkMTJmYWQ0ODE2OGZlZWExNDcwNDMwZGRjIiwiaWF0IjoxNjg0NTk5OTc3Ljk4MjUyOSwibmJmIjoxNjg0NTk5OTc3Ljk4MjUzMSwiZXhwIjoxNjg0NjA1Mzc3Ljk3NjQ2MSwic3ViIjoiMyIsInNjb3BlcyI6WyJ0b3Rlbl9wZHYiLCJ0b3Rlbl9wZHZfcGF0aW9fMSJdfQ.SUgYSJegTpR2ss_HzhUS-VSn3RTnu1CFaKoaOErmNy_kyX-71cbr8UcdNWdxG2wBJDcJ-VHBuAThjRZM57KJIF3CqZLZXzUKw644Wp11r1lGVua1UYyoeAsuoe6Yl6udiOZCI-A-a_0H1LXYKNKdDQ-eeLa4OCrmu9FNmd-m__kwsHuDA5M1YcPBWWzyaNMZMtZ8jRDyZvgwPf2yBIkqPW-jNCOuspKLXxUgIxJv__csRCBnJ1QcszD3bYVOTEAQb6YxMo9hOA43Zp6txoa4BaUb8H132vOSqlYHwYss_Uf25n26QyQviXC5l2n_kFVccHJAF5avshyJ3MIqUPAyUwarvDHCYKEYVrfC2_o6q0kEteBsV69TBmOrhI36TC8xV7cVcRnwww7ZQiWGn4zpHc8LPnR87czVReE26unEdb_yA0VrSQF8RwjvTkDAumTa9fs3DYrQcly9QtvmEYkpRza0sbtgLb-a21HJuSJ_6m-VnEaFUEz1bhHBC7aUVx34QQELpd1r9YlNXi-fpP3BZx7IvR2fAXNI075bYsa9nkKSI3jUThhBrRYg_Q8BL6KyfmXCxR7TywNNUlJNCwdwuFeC48RBap0eVVAP_e9Ar0cKSfQeL_a7jKQ6DOul0dkzSiMUVUrRMFM7O6bZaK7IGGaSN1FhxlIfhC1elAaJJaI";
+  String test_ticket = "037695606126";
+
+  // ${ScanResult.result}
 
   //get dados
-  _carregarDados() async {
+  Future<void> _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
       Uri.parse(
@@ -39,13 +49,6 @@ class _CpfPageState extends State<CpfPage> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      setState(() {
-        placa = map['dados']['ticket']['placa'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-        convenio = map['dados']['convenio'];
-      });
     } else {
       throw Exception('Erro ao carregar dados');
     }
@@ -56,8 +59,6 @@ class _CpfPageState extends State<CpfPage> {
     super.initState();
     _carregarDados();
   }
-
-  bool get isConveniado => convenio;
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +76,10 @@ class _CpfPageState extends State<CpfPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
               Container(
                 height: (500 / proportion).roundToDouble(),
@@ -121,10 +122,18 @@ class _CpfPageState extends State<CpfPage> {
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ResumoSemConvenioPage()));
+                                  context,
+                                  (ConsultaResponse.convenio &
+                                          ConsultaResponse.ticket_pago)
+                                      ? MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ResumoComConvenioPage(),
+                                        )
+                                      : MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ResumoSemConvenioPage(),
+                                        ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -174,7 +183,8 @@ class _CpfPageState extends State<CpfPage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  isConveniado
+                                  (ConsultaResponse.convenio &
+                                          ConsultaResponse.ticket_pago)
                                       ? MaterialPageRoute(
                                           builder: (context) =>
                                               const ResumoComConvenioPage(),

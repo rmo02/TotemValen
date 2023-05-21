@@ -31,6 +31,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   String placa = "";
   double proportion = 1.437500004211426;
   bool convenio = false;
+  bool ticket_pago = false;
 
   var placaMaskFormatter = MaskTextInputFormatter(
     mask: '###-####',
@@ -54,12 +55,13 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
         enterDate = map['dados']['ticket']['dataEntradaDia'];
         enterHour = map['dados']['ticket']['dataEntradaHora'];
         convenio = map['dados']['convenio'];
+        ticket_pago = map['dados']['ticket_pago'];
       });
     } else {
       throw Exception('Erro ao carregar dados');
     }
   }
-
+  // ??? that is function ???
   _postPlaca() async {
     final authToken = AuthToken().token;
     var response = await http.get(
@@ -79,6 +81,7 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
   }
 
   bool get isConveniado => convenio;
+  bool get isTicketPago => ticket_pago;
 
   @override
   Widget build(BuildContext context) {
@@ -311,14 +314,14 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
 
 
 
-      isConveniado ? showModalClienteOk(context) : showModalClienteNo(context);
+      (isConveniado & isTicketPago) ? showModalClienteOk(context) : showModalClienteNo(context);
 
       await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
         Navigator.push(
           context,
-          isConveniado
+          (isConveniado & isTicketPago)
               ? MaterialPageRoute(
                   builder: (context) => const CpfInsertPage(),
                 )
