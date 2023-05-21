@@ -40,12 +40,15 @@ class _TicketPagoWidgetState extends State<TicketPagoWidget> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text(
-              "${widget.objetoResponse["menssagem"]}",
-              style: TextStyle(
-                color: Color(0xFF1E1E1E),
-                fontSize: (48 / proportion).roundToDouble(),
-                fontWeight: FontWeight.w400,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "${widget.objetoResponse["menssagem"]}",
+                style: TextStyle(
+                  color: Color(0xFF1E1E1E),
+                  fontSize: (48 / proportion).roundToDouble(),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             Icon(

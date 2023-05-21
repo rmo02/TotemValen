@@ -12,6 +12,7 @@ import 'package:totenvalen/model/faturado_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/home.dart';
+import 'package:totenvalen/pages/placa_insert.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
 import 'package:quiver/async.dart';
@@ -186,6 +187,7 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
         printBinded = isBind!;
       });
     });
+    _imprimirRecibo();
   }
 
   Future<bool?> _bindingPrinter() async {
@@ -260,7 +262,15 @@ class _PagamentoOKPageState extends State<PagamentoOKPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: _imprimirRecibo,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(),
+                                  ),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,

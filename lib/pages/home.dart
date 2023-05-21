@@ -19,11 +19,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? scanResult;
   String tdata = "";
-  late bool pago = false;
+  late bool pago;
+  double proportion = 1.437500004211426;
   String mensagem = "";
   late Map<String, dynamic> dadosObjeto;
 
-  _carregarDados() async {
+  Future<void> _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
       Uri.parse(
@@ -114,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                   tdata,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -128,28 +129,43 @@ class _HomePageState extends State<HomePage> {
               width: 900,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      primary: Colors.white),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
                   onPressed: scanBarCode,
                   child: SizedBox(
                     height: 335,
                     width: 890,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [
+                        gradient: const LinearGradient(colors: [
                           Color(0xFFFF875E),
                           Color(0xFFFA6900)
                           //add more colors
                         ]),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      child: const Center(
-                          child: Text(
-                        'Toque para pagar seu ticket',
-                        style: TextStyle(fontSize: 30),
-                      )),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.touch_app_outlined,
+                              size: (70 / proportion).roundToDouble(),
+                            ),
+                            SizedBox(
+                              width: (24 / proportion).roundToDouble(),
+                              height: (24 / proportion).roundToDouble(),
+                            ),
+                            const Text(
+                              'Toque para pagar seu ticket',
+                              style: TextStyle(fontSize: 30),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   )),
             )),
@@ -167,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                   tdata,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -182,7 +198,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   //método scan
-  Future scanBarCode() async {
+  Future<void> scanBarCode() async {
     try {
       final scanResult = await FlutterBarcodeScanner.scanBarcode(
         "#ff6666",
@@ -195,14 +211,17 @@ class _HomePageState extends State<HomePage> {
 
         await _carregarDados();
 
-        if (isPago) {
+        if (pago) {
           if (mounted) {
-            showModalTicketPago(context, this.dadosObjeto);
+            showModalTicketPago(context, dadosObjeto);
 
             await Future.delayed(const Duration(seconds: 4));
           }
           if (mounted) {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
           }
         } else {
           if (mounted) {
