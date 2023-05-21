@@ -125,50 +125,50 @@ class _HomePageState extends State<HomePage> {
             ),
             Center(
                 child: SizedBox(
-              height: 350,
-              width: 900,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    backgroundColor: Colors.white,
-                  ),
-                  onPressed: scanBarCode,
-                  child: SizedBox(
-                    height: 335,
-                    width: 890,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [
-                          Color(0xFFFF875E),
-                          Color(0xFFFA6900)
-                          //add more colors
-                        ]),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.touch_app_outlined,
-                              size: (70 / proportion).roundToDouble(),
-                            ),
-                            SizedBox(
-                              width: (24 / proportion).roundToDouble(),
-                              height: (24 / proportion).roundToDouble(),
-                            ),
-                            const Text(
-                              'Toque para pagar seu ticket',
-                              style: TextStyle(fontSize: 30),
-                            ),
-                          ],
+                  height: 350,
+                  width: 900,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
+                        backgroundColor: Colors.white,
                       ),
-                    ),
-                  )),
-            )),
+                      onPressed: scanBarCode,
+                      child: SizedBox(
+                        height: 335,
+                        width: 890,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [
+                              Color(0xFFFF875E),
+                              Color(0xFFFA6900)
+                              //add more colors
+                            ]),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.touch_app_outlined,
+                                  size: (70 / proportion).roundToDouble(),
+                                ),
+                                SizedBox(
+                                  width: (24 / proportion).roundToDouble(),
+                                  height: (24 / proportion).roundToDouble(),
+                                ),
+                                const Text(
+                                  'Toque para pagar seu ticket',
+                                  style: TextStyle(fontSize: 30),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )),
+                )),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 100,

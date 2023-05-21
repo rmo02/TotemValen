@@ -67,9 +67,9 @@ class _CpfPageState extends State<CpfPage> {
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-            image: AssetImage("assests/fundo.png"),
-            fit: BoxFit.cover,
-          )),
+                image: AssetImage("assests/fundo.png"),
+                fit: BoxFit.cover,
+              )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -124,15 +124,15 @@ class _CpfPageState extends State<CpfPage> {
                                 Navigator.push(
                                   context,
                                   (ConsultaResponse.convenio &
-                                          ConsultaResponse.ticket_pago)
+                                  ConsultaResponse.ticket_pago)
                                       ? MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ResumoComConvenioPage(),
-                                        )
+                                    builder: (context) =>
+                                    const ResumoComConvenioPage(),
+                                  )
                                       : MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ResumoSemConvenioPage(),
-                                        ),
+                                    builder: (context) =>
+                                    const ResumoSemConvenioPage(),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -155,7 +155,7 @@ class _CpfPageState extends State<CpfPage> {
                                     "Não",
                                     style: TextStyle(
                                       fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                      (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
@@ -184,15 +184,15 @@ class _CpfPageState extends State<CpfPage> {
                                 Navigator.push(
                                   context,
                                   (ConsultaResponse.convenio &
-                                          ConsultaResponse.ticket_pago)
+                                  ConsultaResponse.ticket_pago)
                                       ? MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ResumoComConvenioPage(),
-                                        )
+                                    builder: (context) =>
+                                    const ResumoComConvenioPage(),
+                                  )
                                       : MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CpfInsertPage(),
-                                        ),
+                                    builder: (context) =>
+                                    const CpfInsertPage(),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -215,7 +215,7 @@ class _CpfPageState extends State<CpfPage> {
                                     "Sim",
                                     style: TextStyle(
                                       fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                      (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),

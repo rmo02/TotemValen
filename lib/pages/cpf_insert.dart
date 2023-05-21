@@ -68,9 +68,9 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-            image: AssetImage("assests/fundo.png"),
-            fit: BoxFit.cover,
-          )),
+                image: AssetImage("assests/fundo.png"),
+                fit: BoxFit.cover,
+              )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -191,7 +191,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                     "Cancelar",
                                     style: TextStyle(
                                       fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                      (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
@@ -220,20 +220,20 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                 String text = inputCPFController.text;
                                 StoreCpf.setCpf(text);
                                 (ConsultaResponse.convenio &
-                                        ConsultaResponse.ticket_pago)
+                                ConsultaResponse.ticket_pago)
                                     ? StoreConvenio.setConvenio(convenio_id)
                                     : StoreConvenio.setConvenio("");
                                 Navigator.push(
                                   context,
                                   (ConsultaResponse.convenio &
-                                          ConsultaResponse.ticket_pago)
+                                  ConsultaResponse.ticket_pago)
                                       ? MaterialPageRoute(
-                                          builder: (context) => const CpfPage(),
-                                        )
+                                    builder: (context) => const CpfPage(),
+                                  )
                                       : MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ResumoSemConvenioPage(),
-                                        ),
+                                    builder: (context) =>
+                                    const ResumoSemConvenioPage(),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -256,7 +256,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                     "Confirmar",
                                     style: TextStyle(
                                       fontSize:
-                                          (48 / proportion).roundToDouble(),
+                                      (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),

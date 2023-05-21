@@ -6,6 +6,7 @@ import 'package:totenvalen/model/authToken.dart';
 import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
+import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/placa_insert.dart';
 import 'package:totenvalen/widgets/cancel_button_item.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
@@ -51,7 +52,8 @@ class _PlacaPageState extends State<PlacaPage> {
         ConsultaResponse.setPlaca(map['dados']['ticket']['placa']);
         ConsultaResponse.setPermanencia(map['dados']['permanencia'][0]);
         ConsultaResponse.setEnterDate(map['dados']['ticket']['dataEntradaDia']);
-        ConsultaResponse.setEnterHour(map['dados']['ticket']['dataEntradaHora']);
+        ConsultaResponse.setEnterHour(
+            map['dados']['ticket']['dataEntradaHora']);
         ConsultaResponse.setConvenio(map['dados']['convenio']);
         ConsultaResponse.setTicket_pago(map['dados']['ticket_pago']);
       });
@@ -188,28 +190,74 @@ class _PlacaPageState extends State<PlacaPage> {
                             ),
                             child: ElevatedButton(
                               onPressed: () async {
-                                (ConsultaResponse.convenio & ConsultaResponse.ticket_pago)
-                                    ? showModalClienteOk(context)
-                                    : showModalClienteNo(context);
+                                if (ConsultaResponse.convenio &
+                                    ConsultaResponse.ticket_pago) {
+                                  showModalClienteOk(context);
+                                } else if (!ConsultaResponse.convenio &
+                                    !ConsultaResponse.ticket_pago) {
+                                  showModalClienteNo(context);
+                                } else {
+                                  print("oi");
+                                }
 
                                 await Future.delayed(
-                                    const Duration(seconds: 2));
+                                  const Duration(seconds: 2),
+                                );
 
                                 if (mounted) {
-                                  Navigator.push(
-                                    context,
-                                    (ConsultaResponse.convenio & ConsultaResponse.ticket_pago)
-                                        ? MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CpfInsertPage(),
-                                          )
-                                        : MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CpfPage(),
-                                          ),
-                                  );
+                                  if (ConsultaResponse.convenio &
+                                      ConsultaResponse.ticket_pago) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CpfInsertPage(),
+                                      ),
+                                    );
+                                  } else if (!ConsultaResponse.convenio &
+                                      !ConsultaResponse.ticket_pago) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                        const CpfPage(),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ),
+                                    );
+                                  }
                                 }
                               },
+                              // onPressed: () async {
+                              //   (ConsultaResponse.convenio &
+                              //           ConsultaResponse.ticket_pago)
+                              //       ? showModalClienteOk(context)
+                              //       : showModalClienteNo(context);
+                              //
+                              //   await Future.delayed(
+                              //       const Duration(seconds: 2));
+                              //
+                              //   if (mounted) {
+                              //     Navigator.push(
+                              //       context,
+                              //       (ConsultaResponse.convenio &
+                              //               ConsultaResponse.ticket_pago)
+                              //           ? MaterialPageRoute(
+                              //               builder: (context) =>
+                              //                   const CpfInsertPage(),
+                              //             )
+                              //           : MaterialPageRoute(
+                              //               builder: (context) =>
+                              //                   const CpfPage(),
+                              //             ),
+                              //     );
+                              //   }
+                              // },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 disabledForegroundColor: Colors.transparent,

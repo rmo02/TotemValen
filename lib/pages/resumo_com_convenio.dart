@@ -73,9 +73,9 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-            image: AssetImage("assests/fundo.png"),
-            fit: BoxFit.cover,
-          )),
+                image: AssetImage("assests/fundo.png"),
+                fit: BoxFit.cover,
+              )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -154,13 +154,13 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     ConsultaResponse.convenio_descricao,
                                     style: TextStyle(
                                       fontSize:
-                                          (40 / proportion).roundToDouble(),
+                                      (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
                                     ),
@@ -169,7 +169,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     "RS Valor Exemplo",
                                     style: TextStyle(
                                       fontSize:
-                                          (40 / proportion).roundToDouble(),
+                                      (40 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF292929),
                                     ),
@@ -255,7 +255,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                       "Cancelar",
                                       style: TextStyle(
                                         fontSize:
-                                            (48 / proportion).roundToDouble(),
+                                        (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),
@@ -301,7 +301,7 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                       "Liberar saída",
                                       style: TextStyle(
                                         fontSize:
-                                            (48 / proportion).roundToDouble(),
+                                        (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),

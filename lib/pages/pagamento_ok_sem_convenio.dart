@@ -18,16 +18,14 @@ import '../widgets/real_time_clock_item.dart';
 import 'package:quiver/async.dart';
 import 'package:http/http.dart' as http;
 
-class PagamentoOKPage extends StatefulWidget {
-  const PagamentoOKPage({
-    Key? key,
-  }) : super(key: key);
+class PagamentoOkSemConveio extends StatefulWidget {
+  const PagamentoOkSemConveio({Key? key}) : super(key: key);
 
   @override
-  State<PagamentoOKPage> createState() => _PagamentoOKPageState();
+  State<PagamentoOkSemConveio> createState() => _PagamentoOkSemConveioState();
 }
 
-class _PagamentoOKPageState extends State<PagamentoOKPage> {
+class _PagamentoOkSemConveioState extends State<PagamentoOkSemConveio> {
   bool printBinded = false;
   int paperSize = 0;
   String placa = "";
