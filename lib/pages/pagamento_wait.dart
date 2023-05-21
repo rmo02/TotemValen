@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
 import '../widgets/cancel_button_item.dart';
