@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:totenvalen/model/scan_result.dart';
 
-class TicketPagoWidget extends StatefulWidget {
-  const TicketPagoWidget({
-    Key? key,
-    required this.objetoResponse
-  }) : super(key: key);
-
-  final dynamic objetoResponse;
+class TransacaoNaoAutorizada extends StatefulWidget {
+  const TransacaoNaoAutorizada({Key? key}) : super(key: key);
 
   @override
-  State<TicketPagoWidget> createState() => _TicketPagoWidgetState();
+  State<TransacaoNaoAutorizada> createState() => _TransacaoNaoAutorizadaState();
 }
 
-class _TicketPagoWidgetState extends State<TicketPagoWidget> {
+class _TransacaoNaoAutorizadaState extends State<TransacaoNaoAutorizada> {
   @override
   Widget build(BuildContext context) {
     double proportion = 1.437500004211426;
@@ -33,22 +27,19 @@ class _TicketPagoWidgetState extends State<TicketPagoWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              "Ticket ${ScanResult.result} pago",
+              "Transação não autorizada!",
               style: TextStyle(
                 color: Color(0xFFFC7014),
                 fontSize: (72 / proportion).roundToDouble(),
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "${widget.objetoResponse["menssagem"]}",
-                style: TextStyle(
-                  color: Color(0xFF1E1E1E),
-                  fontSize: (48 / proportion).roundToDouble(),
-                  fontWeight: FontWeight.w400,
-                ),
+            Text(
+              "Dirija-se ao balcão",
+              style: TextStyle(
+                color: Color(0xFF1E1E1E),
+                fontSize: (48 / proportion).roundToDouble(),
+                fontWeight: FontWeight.w400,
               ),
             ),
             Icon(

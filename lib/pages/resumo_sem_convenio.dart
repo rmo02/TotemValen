@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_cupom.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/model/tarifa.dart';
@@ -33,7 +34,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
   String placa = "";
   String ticket = "";
   double proportion = 1.437500004211426;
-  List<Tarifa> tarifas = [];
+  List<dynamic> tarifas = [];
   String desconto = "0";
 
   _carregarDados() async {
@@ -46,17 +47,12 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
-        placa = map['dados']['ticket']['placa'];
-        ticket = map['dados']['ticket']['ticketNumero'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-
         if (map['dados']['tarifas'].length > 0) {
-          for (Tarifa tarifa in map['dados']['tarifas']) {
+          for (dynamic tarifa in map['dados']['tarifas']) {
             tarifas.add(tarifa);
           }
         }
+        print(tarifas);
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -86,10 +82,10 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
               Container(
                 height: (660 / proportion).roundToDouble(),
@@ -161,7 +157,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Estacionamento",
+                                    "Descrição",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),
@@ -171,7 +167,6 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                   ),
                                   Text(
                                     "RS Valor",
-                                    // "RS ${tarifas[0].valor}",
                                     style: TextStyle(
                                       fontSize:
                                           (40 / proportion).roundToDouble(),

@@ -7,8 +7,12 @@ import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/faturado_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/model/store_cpf.dart';
+import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/pagamento_ok.dart';
+import 'package:totenvalen/util/modal_cpf_incompativel_placa.dart';
+import 'package:totenvalen/util/modal_transacao_cancelada_function.dart';
+import 'package:totenvalen/util/modal_transacao_nao_autorizada.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../model/tarifa.dart';
 import '../util/modal_cupom_function.dart';
@@ -231,9 +235,21 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: () {
-                                  // MUDAR ISSO AQUI PRA MODAL CANCELAR E TESTAR
-                                  showModalCupom(context);
+                                onPressed: () async {
+                                  showModalTransacaoCancelada(context);
+
+                                  await Future.delayed(
+                                    const Duration(seconds: 2),
+                                  );
+
+                                  if (mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ),
+                                    );
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
@@ -376,7 +392,34 @@ class _ResumoComConvenioPageState extends State<ResumoComConvenioPage> {
           ),
         );
       }
+    } else if (resposta.statusCode == 400) {
+      if (map['codigo'] == 3004) {
+        if (mounted) {
+          showModalCPFIncompativelPlaca(context);
+        }
+
+        await Future.delayed(
+          const Duration(seconds: 2),
+        );
+
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CpfInsertPage(),
+            ),
+          );
+        }
+      }
     } else {
+      if (mounted) {
+        showModalTransacaoNaoAutorizada(context);
+      }
+
+      await Future.delayed(
+        const Duration(seconds: 2),
+      );
+
       if (mounted) {
         Navigator.push(
           context,

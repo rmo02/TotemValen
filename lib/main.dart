@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       debugShowCheckedModeBanner: false,
-      home: PagamentoPixPage(),
+      home: HomePage(),
     );
   }
 }
