@@ -4,7 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/store_convenio.dart';
 import 'package:totenvalen/model/store_cpf.dart';
+import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
+import 'package:totenvalen/util/modal_transacao_cancelada_function.dart';
+import 'package:totenvalen/util/modal_transacao_nao_autorizada.dart';
 
 import '../model/authToken.dart';
 import '../widgets/cancel_button_item.dart';
@@ -68,9 +71,9 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assests/fundo.png"),
-                fit: BoxFit.cover,
-              )),
+            image: AssetImage("assests/fundo.png"),
+            fit: BoxFit.cover,
+          )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -122,6 +125,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                         child: TextField(
                           controller: inputCPFController,
                           textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF1E1E1E),
@@ -168,8 +172,21 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
+                              onPressed: () async {
+                                showModalTransacaoCancelada(context);
+
+                                await Future.delayed(
+                                  const Duration(seconds: 2),
+                                );
+
+                                if (mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomePage(),
+                                    ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -191,7 +208,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                     "Cancelar",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
@@ -219,22 +236,55 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                               onPressed: () {
                                 String text = inputCPFController.text;
                                 StoreCpf.setCpf(text);
-                                (ConsultaResponse.convenio &
-                                ConsultaResponse.ticket_pago)
-                                    ? StoreConvenio.setConvenio(convenio_id)
-                                    : StoreConvenio.setConvenio("");
-                                Navigator.push(
-                                  context,
-                                  (ConsultaResponse.convenio &
-                                  ConsultaResponse.ticket_pago)
-                                      ? MaterialPageRoute(
-                                    builder: (context) => const CpfPage(),
-                                  )
-                                      : MaterialPageRoute(
-                                    builder: (context) =>
-                                    const ResumoSemConvenioPage(),
-                                  ),
-                                );
+
+                                if (ConsultaResponse.convenio &
+                                    ConsultaResponse.ticket_pago) {
+                                  StoreConvenio.setConvenio(convenio_id);
+                                } else if (!ConsultaResponse.convenio &
+                                    !ConsultaResponse.ticket_pago) {
+                                  StoreConvenio.setConvenio("");
+                                } else {
+                                  showModalTransacaoNaoAutorizada(context);
+                                }
+
+                                if (mounted) {
+                                  if (ConsultaResponse.convenio &
+                                      ConsultaResponse.ticket_pago) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const CpfPage(),
+                                      ),
+                                    );
+                                  } else if (!ConsultaResponse.convenio &
+                                      !ConsultaResponse.ticket_pago) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ResumoSemConvenioPage(),
+                                      ),
+                                    );
+                                  }
+                                }
+
+                                // (ConsultaResponse.convenio &
+                                //         ConsultaResponse.ticket_pago)
+                                //     ? StoreConvenio.setConvenio(convenio_id)
+                                //     : StoreConvenio.setConvenio("");
+
+                                // Navigator.push(
+                                //   context,
+                                //   (ConsultaResponse.convenio &
+                                //           ConsultaResponse.ticket_pago)
+                                //       ? MaterialPageRoute(
+                                //           builder: (context) => const CpfPage(),
+                                //         )
+                                //       : MaterialPageRoute(
+                                //           builder: (context) =>
+                                //               const ResumoSemConvenioPage(),
+                                //         ),
+                                // );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -256,7 +306,7 @@ class _CpfInsertPageState extends State<CpfInsertPage> {
                                     "Confirmar",
                                     style: TextStyle(
                                       fontSize:
-                                      (48 / proportion).roundToDouble(),
+                                          (48 / proportion).roundToDouble(),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),

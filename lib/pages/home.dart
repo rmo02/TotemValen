@@ -37,9 +37,13 @@ class _HomePageState extends State<HomePage> {
 
     if (response.statusCode == 200) {
       if (map['codigo'] == 212) {
-        pago = true;
+        setState(() {
+          pago = true;
+        });
       } else {
-        pago = false;
+        setState(() {
+          pago = false;
+        });
       }
       // setState(() {
       //   pago = map['dados']['ticket_pago'];
@@ -125,50 +129,50 @@ class _HomePageState extends State<HomePage> {
             ),
             Center(
                 child: SizedBox(
-                  height: 350,
-                  width: 900,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        backgroundColor: Colors.white,
+              height: 350,
+              width: 900,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                  onPressed: scanBarCode,
+                  child: SizedBox(
+                    height: 335,
+                    width: 890,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [
+                          Color(0xFFFF875E),
+                          Color(0xFFFA6900)
+                          //add more colors
+                        ]),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                      onPressed: scanBarCode,
-                      child: SizedBox(
-                        height: 335,
-                        width: 890,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [
-                              Color(0xFFFF875E),
-                              Color(0xFFFA6900)
-                              //add more colors
-                            ]),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.touch_app_outlined,
-                                  size: (70 / proportion).roundToDouble(),
-                                ),
-                                SizedBox(
-                                  width: (24 / proportion).roundToDouble(),
-                                  height: (24 / proportion).roundToDouble(),
-                                ),
-                                const Text(
-                                  'Toque para pagar seu ticket',
-                                  style: TextStyle(fontSize: 30),
-                                ),
-                              ],
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.touch_app_outlined,
+                              size: (70 / proportion).roundToDouble(),
                             ),
-                          ),
+                            SizedBox(
+                              width: (24 / proportion).roundToDouble(),
+                              height: (24 / proportion).roundToDouble(),
+                            ),
+                            const Text(
+                              'Toque para pagar seu ticket',
+                              style: TextStyle(fontSize: 30),
+                            ),
+                          ],
                         ),
-                      )),
-                )),
+                      ),
+                    ),
+                  )),
+            )),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 100,
@@ -200,12 +204,13 @@ class _HomePageState extends State<HomePage> {
   //método scan
   Future<void> scanBarCode() async {
     try {
-      final scanResult = await FlutterBarcodeScanner.scanBarcode(
-        "#ff6666",
-        "Cancelar",
-        false,
-        ScanMode.BARCODE,
-      );
+      // final scanResult = await FlutterBarcodeScanner.scanBarcode(
+      //   "#ff6666",
+      //   "Cancelar",
+      //   false,
+      //   ScanMode.BARCODE,
+      // );
+      scanResult = "0376953461";
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 

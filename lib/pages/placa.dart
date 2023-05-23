@@ -8,6 +8,7 @@ import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/placa_insert.dart';
+import 'package:totenvalen/util/modal_transacao_nao_autorizada.dart';
 import 'package:totenvalen/widgets/cancel_button_item.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import 'package:totenvalen/widgets/real_time_clock_item.dart';
@@ -50,7 +51,7 @@ class _PlacaPageState extends State<PlacaPage> {
       setState(() {
         ConsultaResponse.setTicket(map['dados']['ticket']['ticketNumero']);
         ConsultaResponse.setPlaca(map['dados']['ticket']['placa']);
-        ConsultaResponse.setPermanencia(map['dados']['permanencia'][0]);
+        ConsultaResponse.setPermanencia(map['dados']['permanencia'][0] + "h" + " " + map['dados']['permanencia'][1] + "m");
         ConsultaResponse.setEnterDate(map['dados']['ticket']['dataEntradaDia']);
         ConsultaResponse.setEnterHour(
             map['dados']['ticket']['dataEntradaHora']);
@@ -197,7 +198,11 @@ class _PlacaPageState extends State<PlacaPage> {
                                     !ConsultaResponse.ticket_pago) {
                                   showModalClienteNo(context);
                                 } else {
-                                  print("oi");
+                                  showModalTransacaoNaoAutorizada(context);
+
+                                  await Future.delayed(
+                                    const Duration(seconds: 2),
+                                  );
                                 }
 
                                 await Future.delayed(
@@ -219,8 +224,7 @@ class _PlacaPageState extends State<PlacaPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                        const CpfPage(),
+                                        builder: (context) => const CpfPage(),
                                       ),
                                     );
                                   } else {

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/cpf.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -49,14 +50,6 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      setState(() {
-        placa = map['dados']['ticket']['placa'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-        convenio = map['dados']['convenio'];
-        ticket_pago = map['dados']['ticket_pago'];
-      });
     } else {
       throw Exception('Erro ao carregar dados');
     }
@@ -100,10 +93,10 @@ class _PlacaInsertPageState extends State<PlacaInsertPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
               Container(
                 height: (570 / proportion).roundToDouble(),

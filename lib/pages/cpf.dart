@@ -10,6 +10,7 @@ import 'package:totenvalen/model/store_cpf.dart';
 import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/resumo_com_convenio.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio.dart';
+import 'package:totenvalen/util/modal_transacao_nao_autorizada.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../widgets/cancel_button_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -120,20 +121,48 @@ class _CpfPageState extends State<CpfPage> {
                                   (15 / proportion).roundToDouble()),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  (ConsultaResponse.convenio &
-                                  ConsultaResponse.ticket_pago)
-                                      ? MaterialPageRoute(
-                                    builder: (context) =>
-                                    const ResumoComConvenioPage(),
-                                  )
-                                      : MaterialPageRoute(
-                                    builder: (context) =>
-                                    const ResumoSemConvenioPage(),
-                                  ),
-                                );
+                              onPressed: () async {
+                                if (ConsultaResponse.convenio &
+                                ConsultaResponse.ticket_pago) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                      const ResumoComConvenioPage(),
+                                    ),
+                                  );
+                                }
+                                else if (!ConsultaResponse.convenio &
+                                !ConsultaResponse.ticket_pago) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                      const ResumoSemConvenioPage(),
+                                    ),
+                                  );
+                                }
+                                else {
+                                  showModalTransacaoNaoAutorizada(context);
+
+                                  await Future.delayed(
+                                    const Duration(seconds: 2),
+                                  );
+                                }
+
+                                // Navigator.push(
+                                //   context,
+                                //   (ConsultaResponse.convenio &
+                                //   ConsultaResponse.ticket_pago)
+                                //       ? MaterialPageRoute(
+                                //     builder: (context) =>
+                                //     const ResumoComConvenioPage(),
+                                //   )
+                                //       : MaterialPageRoute(
+                                //     builder: (context) =>
+                                //     const ResumoSemConvenioPage(),
+                                //   ),
+                                // );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
