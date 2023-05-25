@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> {
       //   false,
       //   ScanMode.BARCODE,
       // );
-      scanResult = "0376953461";
+      scanResult = "037691180539";
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 

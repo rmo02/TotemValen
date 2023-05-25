@@ -8,10 +8,13 @@ import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_cupom.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/model/tarifa.dart';
+import 'package:totenvalen/pages/home.dart';
 
 import 'package:totenvalen/pages/pagamento_ok.dart';
+import 'package:totenvalen/pages/pagamento_pix.dart';
 import 'package:totenvalen/pages/pagamento_select.dart';
 import 'package:totenvalen/pages/resumo_sem_convenio_abono.dart';
+import 'package:totenvalen/util/modal_transacao_cancelada_function.dart';
 import 'package:totenvalen/widgets/header_section_item.dart';
 import '../util/modal_cupom_function.dart';
 import '../widgets/cancel_button_item.dart';
@@ -34,8 +37,11 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
   String placa = "";
   String ticket = "";
   double proportion = 1.437500004211426;
-  List<dynamic> tarifas = [];
+  List<Tarifa> tarifas = [];
   String desconto = "0";
+  bool isLoading = true;
+  double valorTotal = 0.0;
+  Tarifa tarifaTotal = Tarifa(descricao: "Total", valor: 0.0);
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -49,10 +55,18 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
       setState(() {
         if (map['dados']['tarifas'].length > 0) {
           for (dynamic tarifa in map['dados']['tarifas']) {
-            tarifas.add(tarifa);
+            String descricao = tarifa['descricao'];
+            double valor = double.parse(tarifa['valor']);
+            Tarifa novaTarifa = Tarifa(descricao: descricao, valor: valor);
+            tarifas.add(novaTarifa);
+            tarifaTotal.valor += valor;
+            tarifaTotal.descricao = descricao;
+            // tarifas.add(tarifa);
           }
         }
-        print(tarifas);
+        isLoading = false;
+        ConsultaResponse.setDescricaoFinal(tarifaTotal.descricao);
+        ConsultaResponse.setValorTotal(tarifaTotal.valor);
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -88,7 +102,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                 placa: ConsultaResponse.placa,
               ),
               Container(
-                height: (660 / proportion).roundToDouble(),
+                // height: (660 / proportion).roundToDouble(),
                 width: (1340 / proportion).roundToDouble(),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -148,33 +162,62 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: (16 / proportion).roundToDouble(),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Descrição",
-                                    style: TextStyle(
-                                      fontSize:
-                                          (40 / proportion).roundToDouble(),
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF292929),
-                                    ),
-                                  ),
-                                  Text(
-                                    "RS Valor",
-                                    style: TextStyle(
-                                      fontSize:
-                                          (40 / proportion).roundToDouble(),
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF292929),
-                                    ),
-                                  ),
-                                ],
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: isLoading
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : Column(
+                                        children: [
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount: tarifas.length,
+                                            itemBuilder: (context, index) {
+                                              final tarifa = tarifas[index];
+                                              return Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: (16 / proportion)
+                                                      .roundToDouble(),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      tarifa.descricao,
+                                                      style: TextStyle(
+                                                        fontSize: (40 /
+                                                                proportion)
+                                                            .roundToDouble(),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFF292929),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "R\$ ${tarifa.valor}",
+                                                      style: TextStyle(
+                                                        fontSize: (40 /
+                                                                proportion)
+                                                            .roundToDouble(),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFF292929),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        ],
+                                      ),
                               ),
                             ),
                           ],
@@ -201,8 +244,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                             ),
                           ),
                           Text(
-                            "RS Descrição",
-                            // "RS ${tarifas[0].valor}",
+                            "R\$ ${tarifaTotal.valor}",
                             style: TextStyle(
                               fontSize: (48 / proportion).roundToDouble(),
                               fontWeight: FontWeight.w700,
@@ -217,6 +259,8 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
+
+                          // CANCELAR OPERAÇÃO
                           SizedBox(
                             width: (620 / proportion).roundToDouble(),
                             height: (152 / proportion).roundToDouble(),
@@ -232,7 +276,22 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                     (15 / proportion).roundToDouble()),
                               ),
                               child: ElevatedButton(
-                                onPressed: scanBarCode,
+                                onPressed: () async {
+                                  showModalTransacaoCancelada(context);
+
+                                  await Future.delayed(
+                                    const Duration(seconds: 2),
+                                  );
+
+                                  if (mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ),
+                                    );
+                                  }
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   disabledForegroundColor: Colors.transparent,
@@ -242,7 +301,7 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Icons.sticky_note_2_outlined,
+                                      Icons.block,
                                       size: (50 / proportion).roundToDouble(),
                                     ),
                                     SizedBox(
@@ -250,10 +309,10 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                       height: (24 / proportion).roundToDouble(),
                                     ),
                                     Text(
-                                      "Adicionar Cupom",
+                                      "Cancelar",
                                       style: TextStyle(
                                         fontSize:
-                                            (48 / proportion).roundToDouble(),
+                                        (48 / proportion).roundToDouble(),
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),
@@ -263,6 +322,56 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                               ),
                             ),
                           ),
+
+                          // ** ADICIONAR CUPOM - SERÁ HABILITADO FUTURAMENTE QUANDO TIVER ALGUM CUPOM DE TESTE
+                          // SizedBox(
+                          //   width: (620 / proportion).roundToDouble(),
+                          //   height: (152 / proportion).roundToDouble(),
+                          //   child: DecoratedBox(
+                          //     decoration: BoxDecoration(
+                          //       gradient: const LinearGradient(
+                          //         colors: [
+                          //           Color(0xFFFF875E),
+                          //           Color(0xFFFA6900),
+                          //         ],
+                          //       ),
+                          //       borderRadius: BorderRadius.circular(
+                          //           (15 / proportion).roundToDouble()),
+                          //     ),
+                          //     child: ElevatedButton(
+                          //       onPressed: scanBarCode,
+                          //       style: ElevatedButton.styleFrom(
+                          //         backgroundColor: Colors.transparent,
+                          //         disabledForegroundColor: Colors.transparent,
+                          //         shadowColor: Colors.transparent,
+                          //       ),
+                          //       child: Row(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           Icon(
+                          //             Icons.sticky_note_2_outlined,
+                          //             size: (50 / proportion).roundToDouble(),
+                          //           ),
+                          //           SizedBox(
+                          //             width: (24 / proportion).roundToDouble(),
+                          //             height: (24 / proportion).roundToDouble(),
+                          //           ),
+                          //           Text(
+                          //             "Adicionar Cupom",
+                          //             style: TextStyle(
+                          //               fontSize:
+                          //                   (48 / proportion).roundToDouble(),
+                          //               fontWeight: FontWeight.w600,
+                          //               color: Colors.white,
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+
+                          // IR PARA PAGAMENTO
                           SizedBox(
                             width: (620 / proportion).roundToDouble(),
                             height: (152 / proportion).roundToDouble(),
@@ -283,9 +392,17 @@ class _ResumoSemConvenioPageState extends State<ResumoSemConvenioPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          PagamentoSelectPage(),
+                                          PagamentoPixPage(),
                                     ),
                                   );
+                                  //** QUANDO TIVER IMPLEMENTADO DÉBITO E CRÉDITO
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) =>
+                                  //         PagamentoSelectPage(),
+                                  //   ),
+                                  // );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,

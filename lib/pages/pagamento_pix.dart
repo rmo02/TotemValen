@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
 import '../model/authToken.dart';
@@ -25,6 +26,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   String permanecia = "";
   String placa = "AAA-1111";
   double proportion = 1.437500004211426;
+
   // para gerar o qrcode
   double tarifa = 0.0;
   String description = "";
@@ -41,31 +43,27 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     );
 
     if (response.statusCode == 200) {
-      print("chegou");
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
-        placa = map['dados']['ticket']['placa'];
-        permanecia = map['dados']['permanencia'][0];
-        enterDate = map['dados']['ticket']['dataEntradaDia'];
-        enterHour = map['dados']['ticket']['dataEntradaHora'];
-        tarifa = map["dados"]["tarifas"]["valor"]; // precisa ser apenas um objeto ou dado único!
-        description = map["dados"]["tarifas"]["descricao"];
+        print(response.body);
       });
     } else {
       throw Exception('Erro ao carregar dados');
     }
   }
 
-  Future<QrcodeStruct> _createQrcode(String externalId, double amount, String description) async {
+  Future<QrcodeStruct> _createQrcode(
+      String externalId, double amount, String description) async {
     final response = await http.post(
-      Uri.parse('https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
+      Uri.parse(
+          'https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
         "externalId": externalId,
-        "amount": tarifa,
-        "description": description
+        "amount": ConsultaResponse.valorTotal,
+        "description": ConsultaResponse.descricaoFinal
       }),
     );
 
@@ -99,10 +97,10 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
 
               // Main info
@@ -213,10 +211,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
       future: _futureQrcode,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return QRCode(
-              qrSize: 250.0,
-              qrData: snapshot.data!.qrCodeImageB64
-          );
+          return QRCode(qrSize: 250.0, qrData: snapshot.data!.qrCodeImageB64);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
