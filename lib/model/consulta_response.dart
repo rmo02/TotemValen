@@ -53,5 +53,17 @@ class ConsultaResponse {
     _ticket_pago = value;
   }
 
+  static double _valorTotal = 0.0;
+  static double get valorTotal => _valorTotal;
+  static void setValorTotal(double value) {
+    _valorTotal = value;
+  }
+
+  static String _descricaoFinal = "";
+  static String get descricaoFinal => _descricaoFinal;
+  static void setDescricaoFinal(String value) {
+    _descricaoFinal = value;
+  }
+
 
 }

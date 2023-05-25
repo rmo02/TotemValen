@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/pages/pagamento_pix.dart';
 import 'package:totenvalen/pages/pagamento_wait.dart';
 
@@ -70,10 +71,10 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
               HeaderSectionItem(
                 proportion: proportion,
                 actualDateTime: actualDateTime,
-                enterHour: enterHour,
-                enterDate: enterDate,
-                permanecia: permanecia,
-                placa: placa,
+                enterHour: ConsultaResponse.enterHour,
+                enterDate: ConsultaResponse.enterDate,
+                permanecia: ConsultaResponse.permanencia,
+                placa: ConsultaResponse.placa,
               ),
               Container(
                 height: (660 / proportion).roundToDouble(),
@@ -93,12 +94,15 @@ class _PagamentoSelectPageState extends State<PagamentoSelectPage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+
+                    // **HABILITADO QUANDO CRÉDITO E DÉBITO TIVEREM SIDO IMPLEMENTADOS
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
+                            //** CRÉDITO E DÉBITO - IMPLEMENTADAS FUTURAMENTE
                             SizedBox(
                               width: (620 / proportion).roundToDouble(),
                               height: (200 / proportion).roundToDouble(),

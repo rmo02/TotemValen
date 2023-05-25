@@ -1,10 +1,10 @@
 class Tarifa {
-  final int id;
-  final String descricao;
-  final double valor;
+  final int? id;
+  String descricao;
+  double valor;
 
   Tarifa({
-    required this.id,
+    this.id,
     required this.descricao,
     required this.valor,
   });
