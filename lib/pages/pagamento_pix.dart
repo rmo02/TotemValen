@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
@@ -33,6 +35,10 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   String tollId = "4b2ec3f976a54740a0185a362210753b";
   String externalId = "816a6a5a42124f7880c2853";
   Future<QrcodeStruct>? _futureQrcode; // se precisar clicar em algum button
+  String qrCodebase64 = "";
+  late Uint8List imageBytes;
+  bool imageBytesTrue = false;
+
   //
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -52,7 +58,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     }
   }
 
-  Future<QrcodeStruct> _createQrcode(
+  _createQrCodeBase64(
       String externalId, double amount, String description) async {
     final response = await http.post(
       Uri.parse(
@@ -62,23 +68,52 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
       },
       body: jsonEncode(<String, dynamic>{
         "externalId": externalId,
-        "amount": ConsultaResponse.valorTotal,
+        "amount": 8,
         "description": ConsultaResponse.descricaoFinal
       }),
     );
 
     if (response.statusCode == 201) {
-      return QrcodeStruct.fromJson(jsonDecode(response.body));
+      setState(() {
+      Map<String, dynamic> map = jsonDecode(response.body);
+        qrCodebase64 = map["qrCodeImageB64"];
+        imageBytesTrue = true;
+        imageBytes = decodeBase64Image(qrCodebase64);
+      });
     } else {
       throw Exception('Failed to create qrcode.');
     }
   }
 
+  // Future<QrcodeStruct> _createQrcode(String externalId, double amount,
+  //     String description) async {
+  //   final response = await http.post(
+  //     Uri.parse(
+  //         'https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, dynamic>{
+  //       "externalId": externalId,
+  //       "amount": 500,
+  //       "description": ConsultaResponse.descricaoFinal
+  //     }),
+  //   );
+  //
+  //   if (response.statusCode == 201) {
+  //     return QrcodeStruct.fromJson(jsonDecode(response.body));
+  //   } else {
+  //     throw Exception('Failed to create qrcode.');
+  //   }
+  // }
+
   @override
   void initState() {
     super.initState();
     _carregarDados();
-    _createQrcode(externalId, tarifa, description);
+    _createQrCodeBase64(externalId, tarifa, description);
+    // _futureQrcode = _createQrcode(externalId, tarifa,
+    //     description); // Atribuir o resultado a `_futureQrcode`
   }
 
   @override
@@ -122,16 +157,23 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(
-                      width: (269 / proportion).roundToDouble(),
-                      height: (269 / proportion).roundToDouble(),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD9D9D9),
-                        ),
-                      ),
-                    ),
-                    buildFutureBuilder(),
+                    // SizedBox(
+                    //   width: (269 / proportion).roundToDouble(),
+                    //   height: (269 / proportion).roundToDouble(),
+                    //   child: DecoratedBox(
+                    //     decoration: BoxDecoration(
+                    //       color: Color(0xFFD9D9D9),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Flexible(child: buildFutureBuilder()),
+                    imageBytesTrue
+                        ? Image.memory(
+                            imageBytes,
+                            width: (269 / proportion).roundToDouble(),
+                            height: (269 / proportion).roundToDouble(),
+                          )
+                        : CircularProgressIndicator(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -218,5 +260,9 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
         return const CircularProgressIndicator();
       },
     );
+  }
+
+  Uint8List decodeBase64Image(String base64Image) {
+    return base64Decode(base64Image);
   }
 }
