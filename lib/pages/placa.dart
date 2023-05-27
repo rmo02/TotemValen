@@ -48,16 +48,7 @@ class _PlacaPageState extends State<PlacaPage> {
     );
     Map<String, dynamic> map = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      setState(() {
-        ConsultaResponse.setTicket(map['dados']['ticket']['ticketNumero']);
-        ConsultaResponse.setPlaca(map['dados']['ticket']['placa']);
-        ConsultaResponse.setPermanencia(map['dados']['permanencia'][0] + "h" + " " + map['dados']['permanencia'][1] + "m");
-        ConsultaResponse.setEnterDate(map['dados']['ticket']['dataEntradaDia']);
-        ConsultaResponse.setEnterHour(
-            map['dados']['ticket']['dataEntradaHora']);
-        ConsultaResponse.setConvenio(map['dados']['convenio']);
-        ConsultaResponse.setTicket_pago(map['dados']['ticket_pago']);
-      });
+      print('Requisição enviada com sucesso!');
     } else {
       throw Exception('Erro ao carregar dados');
     }

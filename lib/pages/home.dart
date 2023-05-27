@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:totenvalen/model/authToken.dart';
+import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/model/scan_result.dart';
 import 'package:totenvalen/pages/placa.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -23,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   double proportion = 1.437500004211426;
   String mensagem = "";
   late Map<String, dynamic> dadosObjeto;
+  late Future<void> authTokenFuture;
+  late bool isAuthenticated;
 
   Future<void> _carregarDados() async {
     final authToken = AuthToken().token;
@@ -43,6 +46,19 @@ class _HomePageState extends State<HomePage> {
       } else {
         setState(() {
           pago = false;
+          ConsultaResponse.setTicket(map['dados']['ticket']['ticketNumero']);
+          ConsultaResponse.setPlaca(map['dados']['ticket']['placa']);
+          ConsultaResponse.setPermanencia(map['dados']['permanencia'][0] +
+              "h" +
+              " " +
+              map['dados']['permanencia'][1] +
+              "m");
+          ConsultaResponse.setEnterDate(
+              map['dados']['ticket']['dataEntradaDia']);
+          ConsultaResponse.setEnterHour(
+              map['dados']['ticket']['dataEntradaHora']);
+          ConsultaResponse.setConvenio(map['dados']['convenio']);
+          ConsultaResponse.setTicket_pago(map['dados']['ticket_pago']);
         });
       }
       // setState(() {
@@ -53,7 +69,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _authToken() async {
+  Future<void> _authToken() async {
     Map<String, dynamic> data = {
       "login": "00000000001",
       "senha": "Valen@123",
@@ -72,145 +88,182 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         print('Requisição enviada com sucesso!');
-        AuthToken().token = map['token'];
+        setState(() {
+          AuthToken().token = map['token'];
+          isAuthenticated = true;
+        });
       } else {
         print('Falha ao enviar requisição. Status: ${response.statusCode}');
         print('Response body: ${response.body}');
+        setState(() {
+          isAuthenticated = false;
+        });
       }
     } catch (err) {
-      print('Exception: $err');
+      print('Falha ao enviar requisição. Error: $err');
+      setState(() {
+        isAuthenticated = false;
+      });
     }
   }
 
   @override
   void initState() {
+    super.initState();
     tdata = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
-    super.initState();
-    _authToken();
+    authTokenFuture = _authToken();
   }
 
   bool get isPago => pago;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assests/fundo.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 155,
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  colors: [Color(0xFF061F89), Color(0xFF2233AB)],
-                  radius: 0.8,
-                  center: Alignment(0, 0),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  tdata,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+    return FutureBuilder<void>(
+      future: authTokenFuture,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
-            Center(
-                child: SizedBox(
-              height: 350,
-              width: 900,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    backgroundColor: Colors.white,
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          if (isAuthenticated) {
+            return Scaffold(
+              body: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assests/fundo.png"),
+                    fit: BoxFit.cover,
                   ),
-                  onPressed: scanBarCode,
-                  child: SizedBox(
-                    height: 335,
-                    width: 890,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [
-                          Color(0xFFFF875E),
-                          Color(0xFFFA6900)
-                          //add more colors
-                        ]),
-                        borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 155,
+                      decoration: const BoxDecoration(
+                        gradient: RadialGradient(
+                          colors: [Color(0xFF061F89), Color(0xFF2233AB)],
+                          radius: 0.8,
+                          center: Alignment(0, 0),
+                        ),
                       ),
                       child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.touch_app_outlined,
-                              size: (70 / proportion).roundToDouble(),
-                            ),
-                            SizedBox(
-                              width: (24 / proportion).roundToDouble(),
-                              height: (24 / proportion).roundToDouble(),
-                            ),
-                            const Text(
-                              'Toque para pagar seu ticket',
-                              style: TextStyle(fontSize: 30),
-                            ),
-                          ],
+                        child: Text(
+                          tdata,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  )),
-            )),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 100,
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  colors: [Color(0xFF061F89), Color(0xFF2233AB)],
-                  radius: 0.8,
-                  center: Alignment(0, 0),
+                    Center(
+                        child: SizedBox(
+                      height: 350,
+                      width: 900,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                          onPressed: scanBarCode,
+                          child: SizedBox(
+                            height: 335,
+                            width: 890,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(colors: [
+                                  Color(0xFFFF875E),
+                                  Color(0xFFFA6900)
+                                  //add more colors
+                                ]),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.touch_app_outlined,
+                                      size: (70 / proportion).roundToDouble(),
+                                    ),
+                                    SizedBox(
+                                      width: (24 / proportion).roundToDouble(),
+                                      height: (24 / proportion).roundToDouble(),
+                                    ),
+                                    const Text(
+                                      'Toque para pagar seu ticket',
+                                      style: TextStyle(fontSize: 30),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )),
+                    )),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        gradient: RadialGradient(
+                          colors: [Color(0xFF061F89), Color(0xFF2233AB)],
+                          radius: 0.8,
+                          center: Alignment(0, 0),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          tdata,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Center(
-                child: Text(
-                  tdata,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            );
+          } else {
+            return const Scaffold(
+              body: Center(
+                child: Text('Falha na Autenticação'),
               ),
+            );
+          }
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                  'Um erro aconteceu. Por favor, contate o administrador!'),
             ),
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 
   //método scan
   Future<void> scanBarCode() async {
     try {
-      // final scanResult = await FlutterBarcodeScanner.scanBarcode(
-      //   "#ff6666",
-      //   "Cancelar",
-      //   false,
-      //   ScanMode.BARCODE,
-      // );
-      scanResult = "037691180539";
+      final scanResult = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "Cancelar",
+        false,
+        ScanMode.BARCODE,
+      );
+      // scanResult = "037691180539";
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 
