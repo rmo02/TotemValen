@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
@@ -7,6 +8,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
+import 'package:totenvalen/util/generate_random_string.dart';
+import 'package:totenvalen/util/valor_converter.dart';
+import 'package:web_socket_channel/io.dart';
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
 import '../widgets/cancel_button_item.dart';
@@ -33,11 +37,16 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   double tarifa = 0.0;
   String description = "";
   String tollId = "4b2ec3f976a54740a0185a362210753b";
-  String externalId = "816a6a5a42124f7880c2853";
+
+  // String externalId = "816a6a5a42124f7880c2853";
+  String externalId = generateRandomString(23);
   Future<QrcodeStruct>? _futureQrcode; // se precisar clicar em algum button
   String qrCodebase64 = "";
   late Uint8List imageBytes;
   bool imageBytesTrue = false;
+  late int valorFinal = 0;
+  int notificationCount = 0;
+  Timer? notificationTimer;
 
   //
   _carregarDados() async {
@@ -60,6 +69,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
 
   _createQrCodeBase64(
       String externalId, double amount, String description) async {
+    print(externalId);
     final response = await http.post(
       Uri.parse(
           'https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
@@ -68,14 +78,15 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
       },
       body: jsonEncode(<String, dynamic>{
         "externalId": externalId,
-        "amount": 8,
+        "amount": 1,
+        // "amount": ValorConverter.convertValorFinal(ConsultaResponse.valorTotal),
         "description": ConsultaResponse.descricaoFinal
       }),
     );
 
     if (response.statusCode == 201) {
       setState(() {
-      Map<String, dynamic> map = jsonDecode(response.body);
+        Map<String, dynamic> map = jsonDecode(response.body);
         qrCodebase64 = map["qrCodeImageB64"];
         imageBytesTrue = true;
         imageBytes = decodeBase64Image(qrCodebase64);
@@ -84,6 +95,37 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
       throw Exception('Failed to create qrcode.');
     }
   }
+
+  void receiveNotifications() async {
+    final url = 'https://1563-2804-431-c7f1-200b-e080-8c29-8118-713a.ngrok.io/exchanger/webhook';
+    final timeoutDuration = Duration(seconds: 60); // Duração do timeout em segundos
+
+    try {
+      final response = await http.get(Uri.parse(url)).timeout(timeoutDuration);
+
+      if (response.statusCode == 200) {
+        // Aqui você pode processar a notificação recebida
+        final notification = response.body;
+        print('Notificação recebida: $notification');
+        notificationCount++;
+      } else {
+        print('Erro ao receber notificação. Código de status: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Erro ao receber notificação: $error');
+    }
+
+    // Verificar se o tempo decorrido é inferior a 60 segundos e continuar recebendo notificações
+    if (notificationTimer == null && notificationCount < 60) {
+      notificationTimer = Timer(const Duration(seconds: 1), () {
+        notificationTimer?.cancel();
+        notificationTimer = null;
+        receiveNotifications();
+      });
+    }
+  }
+
+
 
   // Future<QrcodeStruct> _createQrcode(String externalId, double amount,
   //     String description) async {
@@ -112,6 +154,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     super.initState();
     _carregarDados();
     _createQrCodeBase64(externalId, tarifa, description);
+    receiveNotifications();
     // _futureQrcode = _createQrcode(externalId, tarifa,
     //     description); // Atribuir o resultado a `_futureQrcode`
   }
