@@ -2,17 +2,23 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
+import 'package:event_bus_plus/res/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:totenvalen/model/consulta_response.dart';
+import 'package:totenvalen/pages/pagamento_ok_sem_convenio.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
 import 'package:totenvalen/util/generate_random_string.dart';
+import 'package:totenvalen/util/modal_erro_operacao_pix.dart';
 import 'package:totenvalen/util/valor_converter.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
+import '../util/identificador_totem_event.dart';
+import '../util/pagamento_pix_event.dart';
 import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -40,15 +46,19 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
 
   // String externalId = "816a6a5a42124f7880c2853";
   String externalId = generateRandomString(23);
+
   Future<QrcodeStruct>? _futureQrcode; // se precisar clicar em algum button
   String qrCodebase64 = "";
   late Uint8List imageBytes;
   bool imageBytesTrue = false;
   late int valorFinal = 0;
-  int notificationCount = 0;
   Timer? notificationTimer;
 
-  //
+  late bool pagamentoConfirmado = false;
+  late String statusPagamento = "";
+
+  final EventBus eventBus = EventBus();
+
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
@@ -96,67 +106,31 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     }
   }
 
-  void receiveNotifications() async {
-    final url = 'https://1563-2804-431-c7f1-200b-e080-8c29-8118-713a.ngrok.io/exchanger/webhook';
-    final timeoutDuration = Duration(seconds: 60); // Duração do timeout em segundos
-
-    try {
-      final response = await http.get(Uri.parse(url)).timeout(timeoutDuration);
-
-      if (response.statusCode == 200) {
-        // Aqui você pode processar a notificação recebida
-        final notification = response.body;
-        print('Notificação recebida: $notification');
-        notificationCount++;
-      } else {
-        print('Erro ao receber notificação. Código de status: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Erro ao receber notificação: $error');
-    }
-
-    // Verificar se o tempo decorrido é inferior a 60 segundos e continuar recebendo notificações
-    if (notificationTimer == null && notificationCount < 60) {
-      notificationTimer = Timer(const Duration(seconds: 1), () {
-        notificationTimer?.cancel();
-        notificationTimer = null;
-        receiveNotifications();
-      });
-    }
-  }
-
-
-
-  // Future<QrcodeStruct> _createQrcode(String externalId, double amount,
-  //     String description) async {
-  //   final response = await http.post(
-  //     Uri.parse(
-  //         'https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(<String, dynamic>{
-  //       "externalId": externalId,
-  //       "amount": 500,
-  //       "description": ConsultaResponse.descricaoFinal
-  //     }),
-  //   );
-  //
-  //   if (response.statusCode == 201) {
-  //     return QrcodeStruct.fromJson(jsonDecode(response.body));
-  //   } else {
-  //     throw Exception('Failed to create qrcode.');
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
     _carregarDados();
     _createQrCodeBase64(externalId, tarifa, description);
-    receiveNotifications();
-    // _futureQrcode = _createQrcode(externalId, tarifa,
-    //     description); // Atribuir o resultado a `_futureQrcode`
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Emitir o evento "identificador-totem" após o carregamento da tela
+      eventBus.fire(IdentificadorTotemEvent(externalId));
+    });
+
+    eventBus.on<PagamentoPixEvent>().listen(handlePagamentoPixEvent);
+  }
+
+  void handlePagamentoPixEvent(PagamentoPixEvent event) {
+    // Verificar se o evento é específico para este dispositivo
+    if (event.identificadorDispositivo == externalId) {
+      // Processar a resposta do servidor aqui
+      // Por exemplo, atualizar o estado do pagamentoConfirmado e statusPagamento
+      setState(() {
+        pagamentoConfirmado = true;
+        statusPagamento = event.statusPagamento;
+      });
+      // Aguardar para ver o corpo da resposta do pagamento e ver o status do pagamento para prosseguir ou não para a próxima tela
+    }
   }
 
   @override

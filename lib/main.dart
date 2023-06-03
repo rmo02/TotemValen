@@ -4,6 +4,7 @@ import 'package:totenvalen/pages/cpf.dart';
 import 'package:totenvalen/pages/cpf_insert.dart';
 import 'package:totenvalen/pages/home.dart';
 import 'package:totenvalen/pages/pagamento_pix.dart';
+import 'package:totenvalen/api/main.dart';
 
 void main() {
 
@@ -15,6 +16,9 @@ void main() {
   );
 
   runApp(MyApp());
+
+  // Iniciando o servidor
+  mainAPi();
 }
 
 class MyApp extends StatelessWidget {

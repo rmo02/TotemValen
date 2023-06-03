@@ -12,6 +12,8 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'package:totenvalen/util/modal_ticket_pago.dart';
 
+import '../util/get_ip_address.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -26,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   late Map<String, dynamic> dadosObjeto;
   late Future<void> authTokenFuture;
   late bool isAuthenticated;
+  String? api = "ip";
 
   Future<void> _carregarDados() async {
     final authToken = AuthToken().token;
@@ -113,6 +116,16 @@ class _HomePageState extends State<HomePage> {
     tdata = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     authTokenFuture = _authToken();
+    getIP();
+  }
+
+  void getIP() async {
+    api = await getIpAddress();
+    if (api != "") {
+      setState(() {
+        api = api;
+      });
+    }
   }
 
   bool get isPago => pago;
