@@ -1,12 +1,24 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:typed_data';
+import 'package:event_bus_plus/res/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:totenvalen/model/consulta_response.dart';
+import 'package:totenvalen/pages/pagamento_ok_sem_convenio.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
+import 'package:totenvalen/util/generate_random_string.dart';
+import 'package:totenvalen/util/modal_erro_operacao_pix.dart';
+import 'package:totenvalen/util/valor_converter.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
+import '../util/identificador_totem_event.dart';
+import '../util/pagamento_pix_event.dart';
 import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -31,9 +43,22 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   double tarifa = 0.0;
   String description = "";
   String tollId = "4b2ec3f976a54740a0185a362210753b";
-  String externalId = "816a6a5a42124f7880c2853";
+
+  // String externalId = "816a6a5a42124f7880c2853";
+  String externalId = generateRandomString(23);
+
   Future<QrcodeStruct>? _futureQrcode; // se precisar clicar em algum button
-  //
+  String qrCodebase64 = "";
+  late Uint8List imageBytes;
+  bool imageBytesTrue = false;
+  late int valorFinal = 0;
+  Timer? notificationTimer;
+
+  late bool pagamentoConfirmado = false;
+  late String statusPagamento = "";
+
+  final EventBus eventBus = EventBus();
+
   _carregarDados() async {
     final authToken = AuthToken().token;
     var response = await http.get(
@@ -52,8 +77,9 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     }
   }
 
-  Future<QrcodeStruct> _createQrcode(
+  _createQrCodeBase64(
       String externalId, double amount, String description) async {
+    print(externalId);
     final response = await http.post(
       Uri.parse(
           'https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
@@ -62,13 +88,19 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
       },
       body: jsonEncode(<String, dynamic>{
         "externalId": externalId,
-        "amount": ConsultaResponse.valorTotal,
+        "amount": 1,
+        // "amount": ValorConverter.convertValorFinal(ConsultaResponse.valorTotal),
         "description": ConsultaResponse.descricaoFinal
       }),
     );
 
     if (response.statusCode == 201) {
-      return QrcodeStruct.fromJson(jsonDecode(response.body));
+      setState(() {
+        Map<String, dynamic> map = jsonDecode(response.body);
+        qrCodebase64 = map["qrCodeImageB64"];
+        imageBytesTrue = true;
+        imageBytes = decodeBase64Image(qrCodebase64);
+      });
     } else {
       throw Exception('Failed to create qrcode.');
     }
@@ -78,7 +110,27 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   void initState() {
     super.initState();
     _carregarDados();
-    _createQrcode(externalId, tarifa, description);
+    _createQrCodeBase64(externalId, tarifa, description);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Emitir o evento "identificador-totem" após o carregamento da tela
+      eventBus.fire(IdentificadorTotemEvent(externalId));
+    });
+
+    eventBus.on<PagamentoPixEvent>().listen(handlePagamentoPixEvent);
+  }
+
+  void handlePagamentoPixEvent(PagamentoPixEvent event) {
+    // Verificar se o evento é específico para este dispositivo
+    if (event.identificadorDispositivo == externalId) {
+      // Processar a resposta do servidor aqui
+      // Por exemplo, atualizar o estado do pagamentoConfirmado e statusPagamento
+      setState(() {
+        pagamentoConfirmado = true;
+        statusPagamento = event.statusPagamento;
+      });
+      // Aguardar para ver o corpo da resposta do pagamento e ver o status do pagamento para prosseguir ou não para a próxima tela
+    }
   }
 
   @override
@@ -122,16 +174,23 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(
-                      width: (269 / proportion).roundToDouble(),
-                      height: (269 / proportion).roundToDouble(),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD9D9D9),
-                        ),
-                      ),
-                    ),
-                    buildFutureBuilder(),
+                    // SizedBox(
+                    //   width: (269 / proportion).roundToDouble(),
+                    //   height: (269 / proportion).roundToDouble(),
+                    //   child: DecoratedBox(
+                    //     decoration: BoxDecoration(
+                    //       color: Color(0xFFD9D9D9),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Flexible(child: buildFutureBuilder()),
+                    imageBytesTrue
+                        ? Image.memory(
+                            imageBytes,
+                            width: (269 / proportion).roundToDouble(),
+                            height: (269 / proportion).roundToDouble(),
+                          )
+                        : CircularProgressIndicator(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -218,5 +277,9 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
         return const CircularProgressIndicator();
       },
     );
+  }
+
+  Uint8List decodeBase64Image(String base64Image) {
+    return base64Decode(base64Image);
   }
 }
