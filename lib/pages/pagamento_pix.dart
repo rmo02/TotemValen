@@ -5,16 +5,12 @@ import 'dart:typed_data';
 import 'package:event_bus_plus/res/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:totenvalen/model/consulta_response.dart';
 import 'package:totenvalen/pages/pagamento_ok_sem_convenio.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
 import 'package:totenvalen/util/generate_random_string.dart';
-import 'package:totenvalen/util/modal_erro_operacao_pix.dart';
-import 'package:totenvalen/util/valor_converter.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
 import '../util/identificador_totem_event.dart';
@@ -56,8 +52,6 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
 
   late bool pagamentoConfirmado = false;
   late String statusPagamento = "";
-
-  final EventBus eventBus = EventBus();
 
   _carregarDados() async {
     final authToken = AuthToken().token;
@@ -106,31 +100,50 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     }
   }
 
+  final channel = IOWebSocketChannel.connect('ws://your-websocket-url');
+
   @override
   void initState() {
     super.initState();
     _carregarDados();
     _createQrCodeBase64(externalId, tarifa, description);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Emitir o evento "identificador-totem" após o carregamento da tela
-      eventBus.fire(IdentificadorTotemEvent(externalId));
-    });
-
-    eventBus.on<PagamentoPixEvent>().listen(handlePagamentoPixEvent);
   }
 
-  void handlePagamentoPixEvent(PagamentoPixEvent event) {
-    // Verificar se o evento é específico para este dispositivo
-    if (event.identificadorDispositivo == externalId) {
-      // Processar a resposta do servidor aqui
-      // Por exemplo, atualizar o estado do pagamentoConfirmado e statusPagamento
-      setState(() {
-        pagamentoConfirmado = true;
-        statusPagamento = event.statusPagamento;
-      });
-      // Aguardar para ver o corpo da resposta do pagamento e ver o status do pagamento para prosseguir ou não para a próxima tela
-    }
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
+    connectWebSocket();
+  }
+
+  void connectWebSocket() {
+    final channel = IOWebSocketChannel.connect('ws://your-websocket-url');
+    String uniqueIdentifier = externalId;
+
+    emitEvent('identificador-totem', uniqueIdentifier); // Envie o identificador único para o servidor
+
+    channel.stream.listen((message) {
+      Map<String, dynamic> response = jsonDecode(message);
+      print(response);
+      // Verifique se a resposta recebida é para o dispositivo atual
+      if (response['deviceIdentifier'] == uniqueIdentifier && response['event'] == 'pagamento-pix') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PagamentoOkSemConveio(),
+          ),
+        );
+      }
+    });
+  }
+
+  void emitEvent(String eventName, dynamic eventData) {
+    Map<String, dynamic> data = {
+      'event': eventName,
+      'data': eventData,
+    };
+
+    channel.sink.add(jsonEncode(data));
   }
 
   @override

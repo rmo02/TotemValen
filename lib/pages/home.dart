@@ -11,6 +11,8 @@ import 'package:totenvalen/pages/placa.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'package:totenvalen/util/modal_ticket_pago.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../util/get_ip_address.dart';
 
@@ -130,8 +132,40 @@ class _HomePageState extends State<HomePage> {
 
   bool get isPago => pago;
 
+
   @override
   Widget build(BuildContext context) {
+    // final channel = WebSocketChannel.connect(
+    //   Uri.parse('wss://ws-feed.pro.coinbase.com'),
+    // );
+    //
+    // channel.sink.add(
+    //   jsonEncode(
+    //     {
+    //       "type": "subscribe",
+    //       "channels": [
+    //         {
+    //           "name": "ticker",
+    //           "product_ids": [
+    //             "BTC-EUR",
+    //           ]
+    //         }
+    //       ]
+    //     },
+    //   ),
+    // );
+    //
+    // /// Listen for all incoming data
+    // channel.stream.listen(
+    //       (data) {
+    //     print(data);
+    //   },
+    //   onError: (error) => print(error),
+    // );
+    //
+    // /// Close the channel
+    // channel.sink.close();
+
     return FutureBuilder<void>(
       future: authTokenFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
