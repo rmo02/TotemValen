@@ -52,6 +52,7 @@ dependencies:
   connectivity_plus: ^4.0.1
   event_bus_plus: ^0.6.1
   equatable: ^2.0.5
+  pusher_channels_flutter: ^2.1.2
 
 dev_dependencies:
   flutter_test:

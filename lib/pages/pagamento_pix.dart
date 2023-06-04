@@ -1,20 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:event_bus_plus/res/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import 'package:totenvalen/model/consulta_response.dart';
-import 'package:totenvalen/pages/pagamento_ok_sem_convenio.dart';
 import 'package:totenvalen/qrcode/QRCode.dart';
 import 'package:totenvalen/qrcode/QrcodeStruct.dart';
 import 'package:totenvalen/util/generate_random_string.dart';
 import 'package:web_socket_channel/io.dart';
 import '../model/authToken.dart';
 import '../model/scan_result.dart';
-import '../util/identificador_totem_event.dart';
-import '../util/pagamento_pix_event.dart';
 import '../widgets/cancel_button_item.dart';
 import '../widgets/header_section_item.dart';
 import '../widgets/real_time_clock_item.dart';
@@ -107,44 +103,69 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     super.initState();
     _carregarDados();
     _createQrCodeBase64(externalId, tarifa, description);
+    setupPusher();
   }
 
-  @override
-  void dispose() {
-    channel.sink.close();
-    super.dispose();
-    connectWebSocket();
+  Future<void> setupPusher() async {
+    String api_key = "ec6160c11a4ead432237";
+    String api_cluster = "sa1";
+
+    PusherChannelsFlutter pusher = PusherChannelsFlutter.getInstance();
+    try {
+      await pusher.init(
+        apiKey: api_key,
+        cluster: api_cluster,
+        onEvent: onEvent,
+      );
+
+      await pusher.subscribe(channelName: 'pagamento-pix');
+      await pusher.connect();
+    } catch (e) {
+      print("ERROR: $e");
+    }
   }
 
-  void connectWebSocket() {
-    final channel = IOWebSocketChannel.connect('ws://your-websocket-url');
-    String uniqueIdentifier = externalId;
-
-    emitEvent('identificador-totem', uniqueIdentifier); // Envie o identificador único para o servidor
-
-    channel.stream.listen((message) {
-      Map<String, dynamic> response = jsonDecode(message);
-      print(response);
-      // Verifique se a resposta recebida é para o dispositivo atual
-      if (response['deviceIdentifier'] == uniqueIdentifier && response['event'] == 'pagamento-pix') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PagamentoOkSemConveio(),
-          ),
-        );
-      }
-    });
+  void onEvent(PusherEvent event) {
+    print("onEvent: $event");
   }
 
-  void emitEvent(String eventName, dynamic eventData) {
-    Map<String, dynamic> data = {
-      'event': eventName,
-      'data': eventData,
-    };
+  // @override
+  // void dispose() {
+  //   channel.sink.close();
+  //   super.dispose();
+  //   connectWebSocket();
+  // }
 
-    channel.sink.add(jsonEncode(data));
-  }
+
+  // void connectWebSocket() {
+  //   final channel = IOWebSocketChannel.connect('ws://your-websocket-url');
+  //   String uniqueIdentifier = externalId;
+  //
+  //   emitEvent('identificador-totem', uniqueIdentifier); // Envie o identificador único para o servidor
+  //
+  //   channel.stream.listen((message) {
+  //     Map<String, dynamic> response = jsonDecode(message);
+  //     print(response);
+  //     // Verifique se a resposta recebida é para o dispositivo atual
+  //     if (response['deviceIdentifier'] == uniqueIdentifier && response['event'] == 'pagamento-pix') {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => PagamentoOkSemConveio(),
+  //         ),
+  //       );
+  //     }
+  //   });
+  // }
+  //
+  // void emitEvent(String eventName, dynamic eventData) {
+  //   Map<String, dynamic> data = {
+  //     'event': eventName,
+  //     'data': eventData,
+  //   };
+  //
+  //   channel.sink.add(jsonEncode(data));
+  // }
 
   @override
   Widget build(BuildContext context) {
