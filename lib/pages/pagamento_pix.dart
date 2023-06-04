@@ -96,8 +96,6 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     }
   }
 
-  final channel = IOWebSocketChannel.connect('ws://your-websocket-url');
-
   @override
   void initState() {
     super.initState();
@@ -136,6 +134,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   //   connectWebSocket();
   // }
 
+  // final channel = IOWebSocketChannel.connect('ws://your-websocket-url');
 
   // void connectWebSocket() {
   //   final channel = IOWebSocketChannel.connect('ws://your-websocket-url');

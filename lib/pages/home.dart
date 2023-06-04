@@ -135,36 +135,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final channel = WebSocketChannel.connect(
-    //   Uri.parse('wss://ws-feed.pro.coinbase.com'),
-    // );
-    //
-    // channel.sink.add(
-    //   jsonEncode(
-    //     {
-    //       "type": "subscribe",
-    //       "channels": [
-    //         {
-    //           "name": "ticker",
-    //           "product_ids": [
-    //             "BTC-EUR",
-    //           ]
-    //         }
-    //       ]
-    //     },
-    //   ),
-    // );
-    //
-    // /// Listen for all incoming data
-    // channel.stream.listen(
-    //       (data) {
-    //     print(data);
-    //   },
-    //   onError: (error) => print(error),
-    // );
-    //
-    // /// Close the channel
-    // channel.sink.close();
 
     return FutureBuilder<void>(
       future: authTokenFuture,
@@ -304,14 +274,14 @@ class _HomePageState extends State<HomePage> {
   //método scan
   Future<void> scanBarCode() async {
     try {
-      // final scanResult = await FlutterBarcodeScanner.scanBarcode(
-      //   "#ff6666",
-      //   "Cancelar",
-      //   false,
-      //   ScanMode.BARCODE,
-      // );
+      final scanResult = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "Cancelar",
+        false,
+        ScanMode.BARCODE,
+      );
       // scanResult = "037691180539";
-      scanResult = "037691840400";
+      // scanResult = "037691840400";
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 
