@@ -11,6 +11,8 @@ import 'package:totenvalen/pages/placa.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'package:totenvalen/util/modal_ticket_pago.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../util/get_ip_address.dart';
 
@@ -130,8 +132,10 @@ class _HomePageState extends State<HomePage> {
 
   bool get isPago => pago;
 
+
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder<void>(
       future: authTokenFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -270,14 +274,14 @@ class _HomePageState extends State<HomePage> {
   //método scan
   Future<void> scanBarCode() async {
     try {
-      // final scanResult = await FlutterBarcodeScanner.scanBarcode(
-      //   "#ff6666",
-      //   "Cancelar",
-      //   false,
-      //   ScanMode.BARCODE,
-      // );
+      final scanResult = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "Cancelar",
+        false,
+        ScanMode.BARCODE,
+      );
       // scanResult = "037691180539";
-      scanResult = "037691840400";
+      // scanResult = "037691840400";
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 
