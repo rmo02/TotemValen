@@ -60,7 +60,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
       setState(() {
-        print(response.body);
+        // print(response.body);
       });
     } else {
       throw Exception('Erro ao carregar dados');
@@ -69,7 +69,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
 
   _createQrCodeBase64(
       String externalId, double amount, String description) async {
-    print(externalId);
+    // print(externalId);
     final response = await http.post(
       Uri.parse(
           'https://api.dieselbank.com.br/volvo/pix-toll/${tollId}/generate-static-qr-code'),
@@ -105,6 +105,7 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   }
 
   Future<void> setupPusher() async {
+    print("aaaaaa");
     String api_key = "ec6160c11a4ead432237";
     String api_cluster = "sa1";
 
@@ -124,7 +125,10 @@ class _PagamentoPixPageState extends State<PagamentoPixPage> {
   }
 
   void onEvent(PusherEvent event) {
+    print("------------------------------------------");
+    print("INÍCIO DO EVENTO");
     print("onEvent: $event");
+    print("FIM DO EVENTO");
   }
 
   // @override
