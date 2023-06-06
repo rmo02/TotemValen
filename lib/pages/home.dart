@@ -274,14 +274,14 @@ class _HomePageState extends State<HomePage> {
   //método scan
   Future<void> scanBarCode() async {
     try {
-      // final scanResult = await FlutterBarcodeScanner.scanBarcode(
-      //   "#ff6666",
-      //   "Cancelar",
-      //   false,
-      //   ScanMode.BARCODE,
-      // );
+      final scanResult = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "Cancelar",
+        false,
+        ScanMode.BARCODE,
+      );
       // scanResult = "037691180539";
-      scanResult = "037691840400";
+      // scanResult = "037691840400";
       if (scanResult != '-1') {
         ScanResult.setResult(scanResult);
 
